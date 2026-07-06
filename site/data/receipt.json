@@ -1,0 +1,58 @@
+{
+  "model_path": "examples/models/branch.graph.json",
+  "rules_path": "examples/rules/default.yaml",
+  "node_count": 6,
+  "segment_count": 2,
+  "segments": [
+    {
+      "id": 0,
+      "node_names": [
+        "stem_conv",
+        "stem_relu",
+        "branch_a_conv",
+        "branch_b_conv"
+      ],
+      "backend": "onnxruntime",
+      "dtype": "fp32",
+      "reason": "default",
+      "estimated_ms": 3.05
+    },
+    {
+      "id": 1,
+      "node_names": [
+        "merge",
+        "out_relu"
+      ],
+      "backend": "onnxruntime",
+      "dtype": "fp32",
+      "reason": "break_on_op:Concat",
+      "estimated_ms": 0.2
+    }
+  ],
+  "parity": [
+    {
+      "segment_id": 1,
+      "output_name": "output",
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "rtol": 0.001,
+      "atol": 1e-05,
+      "passed": true
+    }
+  ],
+  "latency_budget_ms": 3.25,
+  "early_publish": [
+    {
+      "output_name": "output",
+      "priority": 1,
+      "producer_segment_id": 1,
+      "estimated_ready_ms": 3.25
+    }
+  ],
+  "gpu_copies": [],
+  "stitch_order": [
+    0,
+    1
+  ],
+  "disclaimer": "Third-party tool inspired by Nuro's published FTL architecture. Not affiliated with Nuro, Inc."
+}

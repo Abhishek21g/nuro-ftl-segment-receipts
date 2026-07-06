@@ -1,0 +1,99 @@
+{
+  "inputs": [
+    "input"
+  ],
+  "outputs": [
+    "relu2"
+  ],
+  "initializers": [
+    "w0",
+    "w2",
+    "w1"
+  ],
+  "nodes": [
+    {
+      "name": "conv_0",
+      "op_type": "Conv",
+      "inputs": [
+        "input",
+        "w0"
+      ],
+      "outputs": [
+        "conv0"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "relu_0",
+      "op_type": "Relu",
+      "inputs": [
+        "conv0"
+      ],
+      "outputs": [
+        "relu0"
+      ],
+      "attributes": {}
+    },
+    {
+      "name": "conv_1",
+      "op_type": "Conv",
+      "inputs": [
+        "relu0",
+        "w1"
+      ],
+      "outputs": [
+        "conv1"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "relu_1",
+      "op_type": "Relu",
+      "inputs": [
+        "conv1"
+      ],
+      "outputs": [
+        "relu1"
+      ],
+      "attributes": {}
+    },
+    {
+      "name": "conv_2",
+      "op_type": "Conv",
+      "inputs": [
+        "relu1",
+        "w2"
+      ],
+      "outputs": [
+        "conv2"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "relu_2",
+      "op_type": "Relu",
+      "inputs": [
+        "conv2"
+      ],
+      "outputs": [
+        "relu2"
+      ],
+      "attributes": {}
+    }
+  ]
+}

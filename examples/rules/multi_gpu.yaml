@@ -1,0 +1,15 @@
+default_backend: onnxruntime
+default_dtype: fp32
+
+gpu_assignments:
+  trunk_conv: 0
+  trunk_relu: 0
+  boxes_head: 1
+  classes_head: 1
+
+cross_gpu_after_nodes:
+  - trunk_relu
+
+early_publish:
+  head_boxes: 0
+  head_classes: 1

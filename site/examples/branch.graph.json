@@ -1,0 +1,102 @@
+{
+  "inputs": [
+    "input"
+  ],
+  "outputs": [
+    "output"
+  ],
+  "initializers": [
+    "w0",
+    "w2",
+    "w1"
+  ],
+  "nodes": [
+    {
+      "name": "stem_conv",
+      "op_type": "Conv",
+      "inputs": [
+        "input",
+        "w0"
+      ],
+      "outputs": [
+        "stem"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "stem_relu",
+      "op_type": "Relu",
+      "inputs": [
+        "stem"
+      ],
+      "outputs": [
+        "stem_relu"
+      ],
+      "attributes": {}
+    },
+    {
+      "name": "branch_a_conv",
+      "op_type": "Conv",
+      "inputs": [
+        "stem_relu",
+        "w1"
+      ],
+      "outputs": [
+        "branch_a"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "branch_b_conv",
+      "op_type": "Conv",
+      "inputs": [
+        "stem_relu",
+        "w2"
+      ],
+      "outputs": [
+        "branch_b"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "merge",
+      "op_type": "Concat",
+      "inputs": [
+        "branch_a",
+        "branch_b"
+      ],
+      "outputs": [
+        "merged"
+      ],
+      "attributes": {
+        "axis": 1
+      }
+    },
+    {
+      "name": "out_relu",
+      "op_type": "Relu",
+      "inputs": [
+        "merged"
+      ],
+      "outputs": [
+        "output"
+      ],
+      "attributes": {}
+    }
+  ]
+}

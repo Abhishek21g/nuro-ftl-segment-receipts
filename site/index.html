@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ONNX segment + parity audit harness inspired by Nuro's published FTL compiler architecture.">
+  <title>FTL Segment Receipts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top">
+      <span class="brand-mark">FTL</span>
+      <span>Segment Receipts</span>
+    </a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#demo">Demo</a>
+      <a href="demo/receipt.html">Live receipt</a>
+    </nav>
+    <a class="nav-action" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts">GitHub</a>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Inspired by Nuro's published FTL architecture — not affiliated</p>
+        <h1>ONNX stitch auditor for compiler islands</h1>
+        <p class="hero-text">
+          Segment an ONNX graph into TensorRT / ORT / custom-kernel islands, check numerical parity,
+          estimate latency budgets, and rank early-publish outputs — the audit trail Nuro-style ML infra
+          engineers would recognize.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="demo/receipt.html">Open demo receipt</a>
+          <a class="button secondary" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts#cli">CLI docs</a>
+        </div>
+      </div>
+
+      <div class="preview-shell" id="demo">
+        <div class="preview-toolbar">branch.graph.json → 2 compiler islands</div>
+        <div class="island-grid" id="island-preview"></div>
+        <div class="preview-metrics" id="metrics-preview"></div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <h2>What the receipt captures</h2>
+      <div class="feature-grid">
+        <article>
+          <h3>Greedy segmenter</h3>
+          <p>Topological walk with YAML breaker rules — deny ops, FP32 islands, backend switches.</p>
+        </article>
+        <article>
+          <h3>Parity probes</h3>
+          <p>Per-output tolerance report vs golden ORT execution (CPU baseline).</p>
+        </article>
+        <article>
+          <h3>Latency budget</h3>
+          <p>Per-segment estimates with backend multipliers (TRT, ORT, custom-kernel).</p>
+        </article>
+        <article>
+          <h3>Early publish</h3>
+          <p>Priority ordering for downstream consumers — don't wait for the full graph.</p>
+        </article>
+        <article>
+          <h3>Multi-GPU splits</h3>
+          <p>Cross-gpu-copy insertion points for pipeline parallelism.</p>
+        </article>
+        <article>
+          <h3>Deterministic JSON</h3>
+          <p>CI-friendly artifacts: plan → run → report, same discipline as eval workbenches.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section cli-block">
+      <h2>Quick start</h2>
+      <pre><code>pip install nuro-ftl-segment-receipts[onnx]
+
+segment-receipts plan model.onnx -r rules.yaml
+segment-receipts run model.onnx -r rules.yaml -o receipts/run1
+segment-receipts report receipts/run1/receipt.json</code></pre>
+    </section>
+
+    <p class="disclaimer">
+      Third-party open tool inspired by
+      <a href="https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67">Nuro's FTL compiler blog</a>.
+      Not affiliated with Nuro, Inc.
+    </p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# FTL Segment Breaker style (blog Fig 6) — force FP32 island around sensitive ops
+default_backend: tensorrt
+default_dtype: fp16
+
+deny_ops:
+  Softmax: onnxruntime
+
+force_fp32_nodes:
+  - sensitive_reduce
+
+break_before_nodes:
+  - sensitive_reduce
+
+backend_overrides:
+  sensitive_reduce: onnxruntime
+
+early_publish:
+  output: 0

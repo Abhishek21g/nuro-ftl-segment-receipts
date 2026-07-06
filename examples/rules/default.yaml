@@ -1,0 +1,22 @@
+# Default segment rules — TensorRT-first with ORT fallback for denied ops
+default_backend: onnxruntime
+default_dtype: fp32
+
+deny_ops:
+  Concat: onnxruntime
+  Softmax: custom-kernel
+
+force_fp32_ops:
+  - Softmax
+
+break_on_op:
+  - Concat
+
+early_publish:
+  output: 1
+  head_boxes: 0
+  head_classes: 2
+
+latency_weights:
+  Conv: 1.0
+  Relu: 0.05

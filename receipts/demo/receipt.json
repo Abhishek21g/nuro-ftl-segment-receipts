@@ -1,0 +1,68 @@
+{
+  "model_path": "examples/models/multi_output.graph.json",
+  "rules_path": "examples/rules/multi_gpu.yaml",
+  "node_count": 4,
+  "segment_count": 1,
+  "segments": [
+    {
+      "id": 0,
+      "node_names": [
+        "trunk_conv",
+        "trunk_relu",
+        "boxes_head",
+        "classes_head"
+      ],
+      "backend": "onnxruntime",
+      "dtype": "fp32",
+      "reason": "default",
+      "estimated_ms": 3.65
+    }
+  ],
+  "parity": [
+    {
+      "segment_id": 0,
+      "output_name": "head_boxes",
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "rtol": 0.001,
+      "atol": 1e-05,
+      "passed": true
+    },
+    {
+      "segment_id": 0,
+      "output_name": "head_classes",
+      "max_abs_diff": 0.0,
+      "mean_abs_diff": 0.0,
+      "rtol": 0.001,
+      "atol": 1e-05,
+      "passed": true
+    }
+  ],
+  "latency_budget_ms": 3.65,
+  "early_publish": [
+    {
+      "output_name": "head_boxes",
+      "priority": 0,
+      "producer_segment_id": 0,
+      "estimated_ready_ms": 3.65
+    },
+    {
+      "output_name": "head_classes",
+      "priority": 1,
+      "producer_segment_id": 0,
+      "estimated_ready_ms": 3.65
+    }
+  ],
+  "gpu_copies": [
+    {
+      "after_segment_id": 0,
+      "from_gpu": 0,
+      "to_gpu": 1,
+      "tensor_name": "trunk_relu"
+    }
+  ],
+  "stitch_order": [
+    0
+  ],
+  "disclaimer": "Third-party tool inspired by Nuro's published FTL architecture. Not affiliated with Nuro, Inc."
+}

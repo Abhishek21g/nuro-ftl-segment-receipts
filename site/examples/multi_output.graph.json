@@ -1,0 +1,78 @@
+{
+  "inputs": [
+    "input"
+  ],
+  "outputs": [
+    "head_boxes",
+    "head_classes"
+  ],
+  "initializers": [
+    "w0",
+    "w2",
+    "w1"
+  ],
+  "nodes": [
+    {
+      "name": "trunk_conv",
+      "op_type": "Conv",
+      "inputs": [
+        "input",
+        "w0"
+      ],
+      "outputs": [
+        "trunk"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "trunk_relu",
+      "op_type": "Relu",
+      "inputs": [
+        "trunk"
+      ],
+      "outputs": [
+        "trunk_relu"
+      ],
+      "attributes": {}
+    },
+    {
+      "name": "boxes_head",
+      "op_type": "Conv",
+      "inputs": [
+        "trunk_relu",
+        "w1"
+      ],
+      "outputs": [
+        "head_boxes"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "name": "classes_head",
+      "op_type": "Conv",
+      "inputs": [
+        "trunk_relu",
+        "w2"
+      ],
+      "outputs": [
+        "head_classes"
+      ],
+      "attributes": {
+        "kernel_shape": [
+          1,
+          1
+        ]
+      }
+    }
+  ]
+}
