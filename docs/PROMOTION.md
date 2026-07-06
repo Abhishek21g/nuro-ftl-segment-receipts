@@ -1,45 +1,45 @@
-# Promotion v1.0 — Silent Regression Hunter
+# Promotion v1.1 — Launch
 
-## The real problem (from Nuro's blog)
+## One-line pitch
 
-> "Third party compilers are notorious for causing silent regressions."
+Open ONNX silent-regression scanner — finds where FP16/TRT compile paths diverge, outputs FTL-style segment breakers. The pre-deploy audit Nuro's blog describes.
 
-FTL's segment breaker (Fig 6) exists **because of this** — not as an abstract compiler feature.
+## Links to share
 
-## What to say (honest, high-signal)
+| What | URL |
+|------|-----|
+| Landing | https://enaguthi.com/nuro-ftl-receipts/site/ |
+| Regression report | https://enaguthi.com/nuro-ftl-receipts/site/demo/regression_report.html |
+| Repo | https://github.com/Abhishek21g/nuro-ftl-segment-receipts |
 
-**Don't say:** "I built a segment receipt tool inspired by FTL."
-
-**Do say:** "I built a tool that finds *where* ONNX compile paths silently diverge and outputs the exact FP32 segment breaker Nuro's blog describes — tested on real ORT intermediate tensor dumps."
-
-## Pitch
+## Copy-paste outreach
 
 ```
-Silent regressions in TRT/FP16 compiler islands don't crash — they drift perception.
+Nuro's FTL blog names the problem: third-party compilers cause silent regressions.
+Segment breakers (Fig 6) exist to isolate FP32 islands when numerics drift.
 
-I built an open scanner that:
-  • dumps every ONNX intermediate activation
-  • diffs reference vs FP16/optimized compile path
-  • pinpoints the FIRST failing node in topo order
-  • emits FTL-style break_before_nodes / force_fp32 rules
+I built an open pre-deploy scanner that:
+  • dumps every ONNX intermediate activation via ORT
+  • diffs reference vs FP16 compile path
+  • pinpoints first topo failure + emits break_before_nodes YAML
+  • plan → run → doctor → report CLI with full artifact trail
 
-Demo: https://enaguthi.com/nuro-ftl-receipts/site/demo/regression_report.html
+Demo: https://enaguthi.com/nuro-ftl-receipts/site/
 Repo: https://github.com/Abhishek21g/nuro-ftl-segment-receipts
 
-Third-party tool from Nuro's public FTL blog — not affiliated.
+Third-party tool from public FTL architecture — not affiliated with Nuro.
 ```
 
-## Where this lands
+## 60s demo commands
 
-| Audience | Why they care |
-|----------|----------------|
-| Nuro ML infra | Same problem their FTL segment breaker solves |
-| Any AV perception team | ONNX→TRT handoff with silent drift |
-| Compiler engineers | Intermediate tensor diff is standard debug — tool automates it |
+```bash
+pip install nuro-ftl-segment-receipts[onnx]
+segment-receipts run examples/models/branch.onnx -o out/receipts
+segment-receipts doctor out/receipts/<run-id>
+```
 
 ## Channels
 
-1. LinkedIn — lead with the **silent regression** problem, not the tool name
-2. Comment on Nuro FTL Medium post — technical, link regression report
-3. Nuro careers — ML compiler / perception infra roles
-4. Show HN — "Finding silent ONNX compile regressions before deployment"
+1. Comment on [Nuro FTL Medium post](https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67) — technical, link regression report
+2. LinkedIn — lead with silent regression problem
+3. Nuro careers — ML compiler / perception infra

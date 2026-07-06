@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Find where ONNX compile paths silently diverge — before they reach your AV perception stack.">
+  <meta name="description" content="Find where ONNX compile paths silently diverge. FTL-style segment breaker recommendations from real ORT tensor scans.">
   <title>Silent Regression Hunter — FTL Segment Receipts</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,13 +13,14 @@
       <span class="brand-mark">SRH</span>
       <div>
         <strong>Silent Regression Hunter</strong>
-        <span class="brand-sub">FTL Segment Receipts</span>
+        <span class="brand-sub">FTL Segment Receipts · v1.1</span>
       </div>
     </div>
     <nav>
       <a href="#problem">Problem</a>
-      <a href="#scan">Live scan</a>
-      <a href="demo/regression_report.html">Full report</a>
+      <a href="#demo">60s demo</a>
+      <a href="#scan">Live run</a>
+      <a href="demo/regression_report.html">Reports</a>
     </nav>
     <a class="nav-action" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts">GitHub</a>
   </header>
@@ -27,25 +28,30 @@
   <main>
     <section class="hero" id="top">
       <div class="hero-copy">
-        <p class="eyebrow">The problem Nuro's FTL compiler was built to solve</p>
-        <h1>Third-party compilers cause <em>silent</em> regressions. Where does yours start?</h1>
+        <p class="eyebrow">Company problem · Nuro FTL blog</p>
+        <h1>Silent compiler regressions don't crash. They <em>drift</em>.</h1>
         <p class="hero-text">
-          Nuro's engineers isolate FP32 subgraphs with <strong>segment breakers</strong> because TensorRT and FP16
-          paths drift without crashing. This tool runs your ONNX graph, compares every activation boundary between
-          reference and candidate compile paths, and tells you <strong>exactly which node to break first</strong>.
+          Nuro built FTL segment breakers because TensorRT and FP16 paths change numerics without errors.
+          This tool augments your ONNX graph, diffs <strong>every intermediate activation</strong>, pinpoints the
+          <strong>first failing node</strong>, and emits breaker YAML — the pre-deploy audit their public blog describes but doesn't ship.
         </p>
         <blockquote class="pull-quote">
           "Third party compilers are notorious for causing silent regressions in the model's performance."
           <cite>— <a href="https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67">Nuro FTL blog</a></cite>
         </blockquote>
         <div class="hero-actions">
-          <a class="button primary" href="demo/regression_report.html">Open full regression report</a>
-          <a class="button secondary" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts#scan">Run on your model</a>
+          <a class="button primary" href="demo/regression_report.html">Open regression report</a>
+          <a class="button secondary" href="#demo">60-second demo</a>
         </div>
       </div>
+
       <aside class="hero-aside" id="scan">
-        <div class="aside-label">Live scan · branch.onnx · FP16 activation drift</div>
+        <div class="aside-header">
+          <span class="live-dot"></span>
+          <span id="run-label">Live run · loading…</span>
+        </div>
         <div class="scan-stats" id="scan-stats"></div>
+        <div class="doctor-status" id="doctor-status"></div>
         <div class="first-failure" id="first-failure"></div>
         <div class="graph-wrap">
           <svg id="graph-svg" viewBox="0 0 580 280" role="img" aria-label="Divergence heatmap"></svg>
@@ -54,27 +60,59 @@
       </aside>
     </section>
 
+    <section class="section demo-block" id="demo">
+      <h2>60-second demo for a hiring manager</h2>
+      <p class="section-lead">No GPU. No Nuro credentials. Real ORT intermediate tensor scan on bundled <code>branch.onnx</code>.</p>
+      <pre class="code-block"><code>pip install nuro-ftl-segment-receipts[onnx]
+
+segment-receipts run examples/models/branch.onnx -o out/receipts
+segment-receipts doctor out/receipts/&lt;run-id&gt;
+open out/receipts/&lt;run-id&gt;/regression_report.html</code></pre>
+      <div class="artifact-grid">
+        <a class="artifact-card" href="demo/regression_report.html">
+          <h3>Regression report</h3>
+          <p>Graph heatmap + per-tensor Δ + breaker YAML</p>
+        </a>
+        <a class="artifact-card" href="demo/receipt.html">
+          <h3>Stitch receipt</h3>
+          <p>Compiler islands after auto-generated breakers</p>
+        </a>
+        <a class="artifact-card" href="demo/report.md">
+          <h3>report.md</h3>
+          <p>Human-readable run summary</p>
+        </a>
+        <a class="artifact-card" href="demo/rules.from-scan.yaml">
+          <h3>rules.from-scan.yaml</h3>
+          <p>Auto break_before_nodes from scan</p>
+        </a>
+      </div>
+    </section>
+
     <section class="section" id="problem">
-      <h2>What this solves (that a segment diagram doesn't)</h2>
-      <div class="solve-grid">
+      <h2>plan → run → doctor → report</h2>
+      <div class="flow-grid">
         <article>
-          <h3>❌ Portfolio toy</h3>
-          <p>Fake latency tables, self-consistency parity, YAML rules with no failing tensors.</p>
+          <h3>plan</h3>
+          <p>Preview segments + scan risks before spending compile cycles.</p>
         </article>
-        <article class="good">
-          <h3>✓ This tool</h3>
-          <p>Augments your ONNX graph, dumps <strong>every intermediate activation</strong>, diffs reference vs FP16/optimized path, ranks divergences, outputs <strong>FTL-style breaker YAML</strong> for the first failure.</p>
+        <article>
+          <h3>run</h3>
+          <p>Scan → auto rules → stitch receipt → full artifact trail in <code>out/receipts/&lt;id&gt;/</code>.</p>
+        </article>
+        <article>
+          <h3>doctor</h3>
+          <p>Flags silent regressions, breaker gaps, parity failures. Exit 1 = don't ship.</p>
+        </article>
+        <article>
+          <h3>report</h3>
+          <p>Regenerates <code>report.md</code> + HTML from artifact dir.</p>
         </article>
       </div>
     </section>
 
-    <section class="section workflow">
-      <h2>Workflow</h2>
-      <ol class="steps">
-        <li><code>segment-receipts scan model.onnx</code> — find first divergence</li>
-        <li>Apply recommended <code>break_before_nodes</code> / <code>force_fp32_nodes</code></li>
-        <li>Re-scan until clean · optional <code>plan</code>/<code>run</code> for stitch receipt</li>
-      </ol>
+    <section class="section findings-block" id="findings">
+      <h2>Doctor findings (this demo run)</h2>
+      <ul class="findings-list" id="findings-list"></ul>
     </section>
 
     <p class="disclaimer">

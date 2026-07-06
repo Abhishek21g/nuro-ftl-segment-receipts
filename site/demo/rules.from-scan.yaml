@@ -1,0 +1,18 @@
+default_backend: onnxruntime
+default_dtype: fp32
+deny_ops: {}
+force_fp32_ops: []
+force_fp32_nodes:
+- branch_b_conv
+- out_relu
+- stem_conv
+break_before_nodes:
+- branch_b_conv
+- out_relu
+- stem_conv
+break_on_op: []
+backend_overrides:
+  stem_conv: onnxruntime
+  out_relu: onnxruntime
+  branch_b_conv: onnxruntime
+early_publish: {}

@@ -43,18 +43,18 @@
   <main>
     <h1>FTL Segment Receipt</h1>
     <p class="meta">Model: <code>examples/models/branch.onnx</code><br>
-    Rules: <code>examples/rules/default.yaml</code></p>
+    Rules: <code>out/receipts/20260706T231316Z/rules.from-scan.yaml</code></p>
 
     <div class="cards">
       <div class="card"><span>Nodes</span><strong>6</strong></div>
-      <div class="card"><span>Segments</span><strong>2</strong></div>
-      <div class="card"><span>Latency budget</span><strong>3.25 ms</strong></div>
+      <div class="card"><span>Segments</span><strong>3</strong></div>
+      <div class="card"><span>Latency budget</span><strong>3.85 ms</strong></div>
       <div class="card"><span>Parity checks</span><strong>1/1</strong></div>
     </div>
 
     <section>
       <h2>Stitch order</h2>
-      <div class="stitch">0 → 1</div>
+      <div class="stitch">0 → 1 → 2</div>
     </section>
 
     <section>
@@ -66,9 +66,9 @@
           <td>0</td>
           <td><code>onnxruntime</code></td>
           <td>fp32</td>
-          <td>4</td>
-          <td>3.050 ms</td>
-          <td>default</td>
+          <td>3</td>
+          <td>2.450 ms</td>
+          <td>break_before:stem_conv</td>
           <td><small>stem_conv, stem_relu, branch_a_conv</small></td>
         </tr>
         <tr>
@@ -76,9 +76,18 @@
           <td><code>onnxruntime</code></td>
           <td>fp32</td>
           <td>2</td>
-          <td>0.200 ms</td>
-          <td>break_on_op:Concat</td>
-          <td><small>merge, out_relu</small></td>
+          <td>1.350 ms</td>
+          <td>break_before:branch_b_conv</td>
+          <td><small>branch_b_conv, merge</small></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>onnxruntime</code></td>
+          <td>fp32</td>
+          <td>1</td>
+          <td>0.050 ms</td>
+          <td>break_before:out_relu</td>
+          <td><small>out_relu</small></td>
         </tr></tbody>
       </table>
     </section>
@@ -89,7 +98,7 @@
         <thead><tr><th>Seg</th><th>Output</th><th>Max Δ</th><th>Mean Δ</th><th>Status</th></tr></thead>
         <tbody>
         <tr class="pass">
-          <td>1</td>
+          <td>2</td>
           <td><code>output</code></td>
           <td>0.00e+00</td>
           <td>0.00e+00</td>
@@ -104,10 +113,10 @@
         <thead><tr><th>Priority</th><th>Output</th><th>Producer</th><th>Ready</th></tr></thead>
         <tbody>
         <tr>
-          <td>1</td>
+          <td>100</td>
           <td><code>output</code></td>
-          <td>seg 1</td>
-          <td>3.250 ms</td>
+          <td>seg 2</td>
+          <td>3.850 ms</td>
         </tr></tbody>
       </table>
     </section>

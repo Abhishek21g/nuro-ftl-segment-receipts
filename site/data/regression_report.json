@@ -11,9 +11,9 @@
     "tensor_name": "stem",
     "producer_node": "stem_conv",
     "producer_op": "Conv",
-    "max_abs_diff": 0.00104809,
-    "mean_abs_diff": 0.00021091,
-    "relative_l2": 0.00021374,
+    "max_abs_diff": 0.00164604,
+    "mean_abs_diff": 0.00023707,
+    "relative_l2": 0.00020322,
     "passed": false,
     "reference_path": "reference",
     "candidate_path": "fp16_activations"
@@ -23,9 +23,9 @@
       "tensor_name": "output",
       "producer_node": "out_relu",
       "producer_op": "Relu",
-      "max_abs_diff": 0.00266171,
-      "mean_abs_diff": 9.539e-05,
-      "relative_l2": 0.00020238,
+      "max_abs_diff": 0.00194359,
+      "mean_abs_diff": 0.00011653,
+      "relative_l2": 0.00020953,
       "passed": false,
       "reference_path": "reference",
       "candidate_path": "fp16_activations"
@@ -34,9 +34,9 @@
       "tensor_name": "branch_b",
       "producer_node": "branch_b_conv",
       "producer_op": "Conv",
-      "max_abs_diff": 0.00266171,
-      "mean_abs_diff": 0.00029654,
-      "relative_l2": 0.00020052,
+      "max_abs_diff": 0.00194359,
+      "mean_abs_diff": 0.0003189,
+      "relative_l2": 0.00020347,
       "passed": false,
       "reference_path": "reference",
       "candidate_path": "fp16_activations"
@@ -45,9 +45,9 @@
       "tensor_name": "merged",
       "producer_node": "merge",
       "producer_op": "Concat",
-      "max_abs_diff": 0.00266171,
-      "mean_abs_diff": 0.00025562,
-      "relative_l2": 0.00020229,
+      "max_abs_diff": 0.00194359,
+      "mean_abs_diff": 0.00022501,
+      "relative_l2": 0.00020639,
       "passed": false,
       "reference_path": "reference",
       "candidate_path": "fp16_activations"
@@ -56,9 +56,9 @@
       "tensor_name": "branch_a",
       "producer_node": "branch_a_conv",
       "producer_op": "Conv",
-      "max_abs_diff": 0.00185204,
-      "mean_abs_diff": 0.0002147,
-      "relative_l2": 0.00020504,
+      "max_abs_diff": 0.0018568,
+      "mean_abs_diff": 0.00013113,
+      "relative_l2": 0.0002198,
       "passed": false,
       "reference_path": "reference",
       "candidate_path": "fp16_activations"
@@ -67,9 +67,9 @@
       "tensor_name": "stem",
       "producer_node": "stem_conv",
       "producer_op": "Conv",
-      "max_abs_diff": 0.00104809,
-      "mean_abs_diff": 0.00021091,
-      "relative_l2": 0.00021374,
+      "max_abs_diff": 0.00164604,
+      "mean_abs_diff": 0.00023707,
+      "relative_l2": 0.00020322,
       "passed": false,
       "reference_path": "reference",
       "candidate_path": "fp16_activations"
@@ -78,9 +78,9 @@
       "tensor_name": "stem_relu",
       "producer_node": "stem_relu",
       "producer_op": "Relu",
-      "max_abs_diff": 0.00104809,
-      "mean_abs_diff": 0.00010806,
-      "relative_l2": 0.00021372,
+      "max_abs_diff": 0.00148726,
+      "mean_abs_diff": 0.00012188,
+      "relative_l2": 0.00020353,
       "passed": false,
       "reference_path": "reference",
       "candidate_path": "fp16_activations"
@@ -88,11 +88,29 @@
   ],
   "breaker_recommendations": [
     {
+      "node_name": "stem_conv",
+      "op_type": "Conv",
+      "tensor_name": "stem",
+      "max_abs_diff": 0.00164604,
+      "reason": "Activation 'stem' diverges max=1.65e-03 between reference and fp16_activations.",
+      "suggested_rule": {
+        "break_before_nodes": [
+          "stem_conv"
+        ],
+        "force_fp32_nodes": [
+          "stem_conv"
+        ],
+        "backend_overrides": {
+          "stem_conv": "onnxruntime"
+        }
+      }
+    },
+    {
       "node_name": "out_relu",
       "op_type": "Relu",
       "tensor_name": "output",
-      "max_abs_diff": 0.00266171,
-      "reason": "Activation 'output' diverges max=2.66e-03 between reference and fp16_activations.",
+      "max_abs_diff": 0.00194359,
+      "reason": "Activation 'output' diverges max=1.94e-03 between reference and fp16_activations.",
       "suggested_rule": {
         "break_before_nodes": [
           "out_relu"
@@ -109,8 +127,8 @@
       "node_name": "branch_b_conv",
       "op_type": "Conv",
       "tensor_name": "branch_b",
-      "max_abs_diff": 0.00266171,
-      "reason": "Activation 'branch_b' diverges max=2.66e-03 between reference and fp16_activations.",
+      "max_abs_diff": 0.00194359,
+      "reason": "Activation 'branch_b' diverges max=1.94e-03 between reference and fp16_activations.",
       "suggested_rule": {
         "break_before_nodes": [
           "branch_b_conv"
@@ -122,24 +140,6 @@
           "branch_b_conv": "onnxruntime"
         }
       }
-    },
-    {
-      "node_name": "merge",
-      "op_type": "Concat",
-      "tensor_name": "merged",
-      "max_abs_diff": 0.00266171,
-      "reason": "Activation 'merged' diverges max=2.66e-03 between reference and fp16_activations.",
-      "suggested_rule": {
-        "break_before_nodes": [
-          "merge"
-        ],
-        "force_fp32_nodes": [
-          "merge"
-        ],
-        "backend_overrides": {
-          "merge": "onnxruntime"
-        }
-      }
     }
   ],
   "graph_layout": [
@@ -149,7 +149,7 @@
       "tensor": "stem",
       "row": 0,
       "col": 0,
-      "max_abs_diff": 0.00104809,
+      "max_abs_diff": 0.00164604,
       "failed": true
     },
     {
@@ -158,7 +158,7 @@
       "tensor": "stem_relu",
       "row": 0,
       "col": 1,
-      "max_abs_diff": 0.00104809,
+      "max_abs_diff": 0.00148726,
       "failed": true
     },
     {
@@ -167,7 +167,7 @@
       "tensor": "branch_a",
       "row": 0,
       "col": 2,
-      "max_abs_diff": 0.00185204,
+      "max_abs_diff": 0.0018568,
       "failed": true
     },
     {
@@ -176,7 +176,7 @@
       "tensor": "branch_b",
       "row": 0,
       "col": 3,
-      "max_abs_diff": 0.00266171,
+      "max_abs_diff": 0.00194359,
       "failed": true
     },
     {
@@ -185,7 +185,7 @@
       "tensor": "merged",
       "row": 1,
       "col": 0,
-      "max_abs_diff": 0.00266171,
+      "max_abs_diff": 0.00194359,
       "failed": true
     },
     {
@@ -194,7 +194,7 @@
       "tensor": "output",
       "row": 1,
       "col": 1,
-      "max_abs_diff": 0.00266171,
+      "max_abs_diff": 0.00194359,
       "failed": true
     }
   ],

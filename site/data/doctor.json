@@ -1,0 +1,24 @@
+{
+  "run_id": "20260706T231316Z",
+  "status": "fail",
+  "findings": [
+    {
+      "severity": "critical",
+      "code": "silent_regression",
+      "message": "6/6 intermediate tensors diverged (first topo failure: stem_conv).",
+      "suggestion": "Insert FP32 segment breaker at first_failure; re-run scan until clean."
+    },
+    {
+      "severity": "info",
+      "code": "breaker_segmented",
+      "message": "First failure node 'stem_conv' is assigned to a compiler island.",
+      "suggestion": "Verify island uses FP32/ORT per recommended suggested_rule."
+    },
+    {
+      "severity": "info",
+      "code": "parity_pass",
+      "message": "All 1 outputs passed parity (onnxruntime).",
+      "suggestion": "Output-level parity is within tolerance."
+    }
+  ]
+}
