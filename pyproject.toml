@@ -1,6 +1,6 @@
 [project]
 name = "nuro-ftl-segment-receipts"
-version = "0.2.0"
+version = "1.0.0"
 description = "ONNX segment + parity audit harness inspired by Nuro's published FTL compiler architecture."
 readme = "README.md"
 requires-python = ">=3.11"

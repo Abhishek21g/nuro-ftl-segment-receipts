@@ -7,6 +7,8 @@ from pathlib import Path
 
 from segment_receipts.merge_diff import build_merge_diff
 from segment_receipts.planner import build_plan, run_audit
+from segment_receipts.regression import scan_regression, write_regression_report
+from segment_receipts.regression_report import write_regression_html
 from segment_receipts.report import write_html_report
 
 
@@ -24,12 +26,30 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="segment-receipts",
         description=(
-            "ONNX segment + parity audit harness inspired by Nuro's published FTL architecture."
+            "Find silent ONNX compile regressions and recommend FTL-style segment breakers."
         ),
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    plan = sub.add_parser("plan", help="Preview segment islands without running parity.")
+    scan = sub.add_parser(
+        "scan",
+        help="Locate where compile path diverges from reference (core workflow).",
+    )
+    scan.add_argument("model", type=Path)
+    scan.add_argument("-o", "--output", type=Path, default=Path("receipts/scan"))
+    scan.add_argument(
+        "--candidate",
+        choices=["optimized", "fp16_activations", "golden"],
+        default="fp16_activations",
+        help="optimized=ORT fusion drift, fp16=TensorRT/FP16 island drift, golden=npz",
+    )
+    scan.add_argument("--golden", type=Path, default=None, help="npz with golden tensors")
+    scan.add_argument("--rtol", type=float, default=1e-4)
+    scan.add_argument("--atol", type=float, default=1e-5)
+    scan.add_argument("--max-tensors", type=int, default=64)
+    scan.set_defaults(handler=_cmd_scan)
+
+    plan = sub.add_parser("plan", help="Preview segment islands (secondary).")
     plan.add_argument("model", type=Path, help="Path to ONNX model")
     plan.add_argument("-r", "--rules", type=Path, required=True, help="YAML segment rules")
     plan.add_argument("--json", action="store_true", help="Print JSON plan")
@@ -60,6 +80,34 @@ def build_parser() -> argparse.ArgumentParser:
     diff.set_defaults(handler=_cmd_diff)
 
     return parser
+
+
+def _cmd_scan(args: argparse.Namespace) -> int:
+    report = scan_regression(
+        args.model,
+        candidate=args.candidate,
+        golden_npz=args.golden,
+        rtol=args.rtol,
+        atol=args.atol,
+        max_tensors=args.max_tensors,
+    )
+    json_path = write_regression_report(report, args.output)
+    html_path = write_regression_html(json_path)
+    print(f"Wrote {json_path}")
+    print(f"Wrote {html_path}")
+    print(
+        f"Divergences: {report.tensors_failed}/{report.tensors_compared} tensors above tolerance"
+    )
+    if report.first_failure:
+        print(
+            f"First failure: {report.first_failure.producer_node} "
+            f"({report.first_failure.producer_op}) max Δ={report.first_failure.max_abs_diff:.2e}"
+        )
+    if report.breaker_recommendations:
+        print(f"Recommended breakers: {len(report.breaker_recommendations)}")
+        for rec in report.breaker_recommendations:
+            print(f"  → {rec.node_name} ({rec.op_type})")
+    return 0
 
 
 def _cmd_plan(args: argparse.Namespace) -> int:

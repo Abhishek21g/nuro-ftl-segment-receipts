@@ -3,110 +3,85 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ONNX segment + parity audit harness inspired by Nuro's published FTL compiler architecture.">
-  <title>FTL Segment Receipts</title>
+  <meta name="description" content="Find where ONNX compile paths silently diverge — before they reach your AV perception stack.">
+  <title>Silent Regression Hunter — FTL Segment Receipts</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="#top">
-      <span class="brand-mark">FTL</span>
-      <span>Segment Receipts</span>
-    </a>
+    <div class="brand">
+      <span class="brand-mark">SRH</span>
+      <div>
+        <strong>Silent Regression Hunter</strong>
+        <span class="brand-sub">FTL Segment Receipts</span>
+      </div>
+    </div>
     <nav>
-      <a href="#how">How it works</a>
-      <a href="#demo">Demo</a>
-      <a href="demo/receipt.html">Live receipt</a>
+      <a href="#problem">Problem</a>
+      <a href="#scan">Live scan</a>
+      <a href="demo/regression_report.html">Full report</a>
     </nav>
     <a class="nav-action" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts">GitHub</a>
   </header>
 
-  <main id="top">
-    <section class="hero">
+  <main>
+    <section class="hero" id="top">
       <div class="hero-copy">
-        <p class="eyebrow">Inspired by Nuro's published FTL architecture — not affiliated</p>
-        <h1>ONNX stitch auditor for compiler islands</h1>
+        <p class="eyebrow">The problem Nuro's FTL compiler was built to solve</p>
+        <h1>Third-party compilers cause <em>silent</em> regressions. Where does yours start?</h1>
         <p class="hero-text">
-          Segment an ONNX graph into TensorRT / ORT / custom-kernel islands, check numerical parity,
-          estimate latency budgets, and rank early-publish outputs — the audit trail Nuro-style ML infra
-          engineers would recognize.
+          Nuro's engineers isolate FP32 subgraphs with <strong>segment breakers</strong> because TensorRT and FP16
+          paths drift without crashing. This tool runs your ONNX graph, compares every activation boundary between
+          reference and candidate compile paths, and tells you <strong>exactly which node to break first</strong>.
         </p>
+        <blockquote class="pull-quote">
+          "Third party compilers are notorious for causing silent regressions in the model's performance."
+          <cite>— <a href="https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67">Nuro FTL blog</a></cite>
+        </blockquote>
         <div class="hero-actions">
-          <a class="button primary" href="demo/receipt.html">Open demo receipt</a>
-          <a class="button secondary" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts#cli">CLI docs</a>
+          <a class="button primary" href="demo/regression_report.html">Open full regression report</a>
+          <a class="button secondary" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts#scan">Run on your model</a>
         </div>
       </div>
-
-      <div class="preview-shell" id="demo">
-        <div class="preview-toolbar">branch.graph.json → 2 compiler islands</div>
-        <div class="island-grid" id="island-preview"></div>
-        <div class="preview-metrics" id="metrics-preview"></div>
-      </div>
+      <aside class="hero-aside" id="scan">
+        <div class="aside-label">Live scan · branch.onnx · FP16 activation drift</div>
+        <div class="scan-stats" id="scan-stats"></div>
+        <div class="first-failure" id="first-failure"></div>
+        <div class="graph-wrap">
+          <svg id="graph-svg" viewBox="0 0 580 280" role="img" aria-label="Divergence heatmap"></svg>
+        </div>
+        <div class="breaker-panel" id="breaker-panel"></div>
+      </aside>
     </section>
 
-    <section class="section" id="merge-diff">
-      <h2>Before / after segment merge</h2>
-      <p class="section-lead">Greedy segmentation can over-split. Merge collapses adjacent compatible islands and removes stitch overhead.</p>
-      <div class="merge-compare" id="merge-compare">
-        <div class="merge-col">
-          <h3>Before merge</h3>
-          <div id="merge-before" class="merge-stack"></div>
-        </div>
-        <div class="merge-arrow">→</div>
-        <div class="merge-col">
-          <h3>After merge</h3>
-          <div id="merge-after" class="merge-stack"></div>
-        </div>
-      </div>
-      <p class="merge-rec" id="merge-rec"></p>
-    </section>
-
-    <section class="section" id="how">
-      <h2>What the receipt captures</h2>
-      <div class="feature-grid">
+    <section class="section" id="problem">
+      <h2>What this solves (that a segment diagram doesn't)</h2>
+      <div class="solve-grid">
         <article>
-          <h3>Greedy segmenter</h3>
-          <p>Topological walk with YAML breaker rules — deny ops, FP32 islands, backend switches.</p>
+          <h3>❌ Portfolio toy</h3>
+          <p>Fake latency tables, self-consistency parity, YAML rules with no failing tensors.</p>
         </article>
-        <article>
-          <h3>Parity probes</h3>
-          <p>Per-output tolerance report vs golden ORT execution (CPU baseline).</p>
-        </article>
-        <article>
-          <h3>Latency budget</h3>
-          <p>Per-segment estimates with backend multipliers (TRT, ORT, custom-kernel).</p>
-        </article>
-        <article>
-          <h3>Early publish</h3>
-          <p>Priority ordering for downstream consumers — don't wait for the full graph.</p>
-        </article>
-        <article>
-          <h3>Multi-GPU splits</h3>
-          <p>Cross-gpu-copy insertion points for pipeline parallelism.</p>
-        </article>
-        <article>
-          <h3>Deterministic JSON</h3>
-          <p>CI-friendly artifacts: plan → run → report, same discipline as eval workbenches.</p>
+        <article class="good">
+          <h3>✓ This tool</h3>
+          <p>Augments your ONNX graph, dumps <strong>every intermediate activation</strong>, diffs reference vs FP16/optimized path, ranks divergences, outputs <strong>FTL-style breaker YAML</strong> for the first failure.</p>
         </article>
       </div>
     </section>
 
-    <section class="section cli-block">
-      <h2>Quick start</h2>
-      <pre><code>pip install nuro-ftl-segment-receipts[onnx]
-
-segment-receipts plan model.onnx -r rules.yaml
-segment-receipts run model.onnx -r rules.yaml -o receipts/run1
-segment-receipts report receipts/run1/receipt.json</code></pre>
+    <section class="section workflow">
+      <h2>Workflow</h2>
+      <ol class="steps">
+        <li><code>segment-receipts scan model.onnx</code> — find first divergence</li>
+        <li>Apply recommended <code>break_before_nodes</code> / <code>force_fp32_nodes</code></li>
+        <li>Re-scan until clean · optional <code>plan</code>/<code>run</code> for stitch receipt</li>
+      </ol>
     </section>
 
     <p class="disclaimer">
-      Third-party open tool inspired by
-      <a href="https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67">Nuro's FTL compiler blog</a>.
-      Not affiliated with Nuro, Inc.
+      Third-party open tool inspired by Nuro's published FTL architecture — not affiliated with Nuro, Inc.
+      Built by <a href="https://enaguthi.com">Abhishek Enaguthi</a>.
     </p>
   </main>
-
   <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,209 @@
+{
+  "model_path": "examples/models/branch.onnx",
+  "problem": "FP16/TensorRT islands can drift while the rest of the graph stays FP32. This scan simulates FP16 activation rounding at every tensor boundary.",
+  "reference_path": "reference",
+  "candidate_path": "fp16_activations",
+  "rtol": 0.0001,
+  "atol": 1e-05,
+  "tensors_compared": 6,
+  "tensors_failed": 6,
+  "first_failure": {
+    "tensor_name": "stem",
+    "producer_node": "stem_conv",
+    "producer_op": "Conv",
+    "max_abs_diff": 0.00104809,
+    "mean_abs_diff": 0.00021091,
+    "relative_l2": 0.00021374,
+    "passed": false,
+    "reference_path": "reference",
+    "candidate_path": "fp16_activations"
+  },
+  "divergences": [
+    {
+      "tensor_name": "output",
+      "producer_node": "out_relu",
+      "producer_op": "Relu",
+      "max_abs_diff": 0.00266171,
+      "mean_abs_diff": 9.539e-05,
+      "relative_l2": 0.00020238,
+      "passed": false,
+      "reference_path": "reference",
+      "candidate_path": "fp16_activations"
+    },
+    {
+      "tensor_name": "branch_b",
+      "producer_node": "branch_b_conv",
+      "producer_op": "Conv",
+      "max_abs_diff": 0.00266171,
+      "mean_abs_diff": 0.00029654,
+      "relative_l2": 0.00020052,
+      "passed": false,
+      "reference_path": "reference",
+      "candidate_path": "fp16_activations"
+    },
+    {
+      "tensor_name": "merged",
+      "producer_node": "merge",
+      "producer_op": "Concat",
+      "max_abs_diff": 0.00266171,
+      "mean_abs_diff": 0.00025562,
+      "relative_l2": 0.00020229,
+      "passed": false,
+      "reference_path": "reference",
+      "candidate_path": "fp16_activations"
+    },
+    {
+      "tensor_name": "branch_a",
+      "producer_node": "branch_a_conv",
+      "producer_op": "Conv",
+      "max_abs_diff": 0.00185204,
+      "mean_abs_diff": 0.0002147,
+      "relative_l2": 0.00020504,
+      "passed": false,
+      "reference_path": "reference",
+      "candidate_path": "fp16_activations"
+    },
+    {
+      "tensor_name": "stem",
+      "producer_node": "stem_conv",
+      "producer_op": "Conv",
+      "max_abs_diff": 0.00104809,
+      "mean_abs_diff": 0.00021091,
+      "relative_l2": 0.00021374,
+      "passed": false,
+      "reference_path": "reference",
+      "candidate_path": "fp16_activations"
+    },
+    {
+      "tensor_name": "stem_relu",
+      "producer_node": "stem_relu",
+      "producer_op": "Relu",
+      "max_abs_diff": 0.00104809,
+      "mean_abs_diff": 0.00010806,
+      "relative_l2": 0.00021372,
+      "passed": false,
+      "reference_path": "reference",
+      "candidate_path": "fp16_activations"
+    }
+  ],
+  "breaker_recommendations": [
+    {
+      "node_name": "out_relu",
+      "op_type": "Relu",
+      "tensor_name": "output",
+      "max_abs_diff": 0.00266171,
+      "reason": "Activation 'output' diverges max=2.66e-03 between reference and fp16_activations.",
+      "suggested_rule": {
+        "break_before_nodes": [
+          "out_relu"
+        ],
+        "force_fp32_nodes": [
+          "out_relu"
+        ],
+        "backend_overrides": {
+          "out_relu": "onnxruntime"
+        }
+      }
+    },
+    {
+      "node_name": "branch_b_conv",
+      "op_type": "Conv",
+      "tensor_name": "branch_b",
+      "max_abs_diff": 0.00266171,
+      "reason": "Activation 'branch_b' diverges max=2.66e-03 between reference and fp16_activations.",
+      "suggested_rule": {
+        "break_before_nodes": [
+          "branch_b_conv"
+        ],
+        "force_fp32_nodes": [
+          "branch_b_conv"
+        ],
+        "backend_overrides": {
+          "branch_b_conv": "onnxruntime"
+        }
+      }
+    },
+    {
+      "node_name": "merge",
+      "op_type": "Concat",
+      "tensor_name": "merged",
+      "max_abs_diff": 0.00266171,
+      "reason": "Activation 'merged' diverges max=2.66e-03 between reference and fp16_activations.",
+      "suggested_rule": {
+        "break_before_nodes": [
+          "merge"
+        ],
+        "force_fp32_nodes": [
+          "merge"
+        ],
+        "backend_overrides": {
+          "merge": "onnxruntime"
+        }
+      }
+    }
+  ],
+  "graph_layout": [
+    {
+      "node": "stem_conv",
+      "op": "Conv",
+      "tensor": "stem",
+      "row": 0,
+      "col": 0,
+      "max_abs_diff": 0.00104809,
+      "failed": true
+    },
+    {
+      "node": "stem_relu",
+      "op": "Relu",
+      "tensor": "stem_relu",
+      "row": 0,
+      "col": 1,
+      "max_abs_diff": 0.00104809,
+      "failed": true
+    },
+    {
+      "node": "branch_a_conv",
+      "op": "Conv",
+      "tensor": "branch_a",
+      "row": 0,
+      "col": 2,
+      "max_abs_diff": 0.00185204,
+      "failed": true
+    },
+    {
+      "node": "branch_b_conv",
+      "op": "Conv",
+      "tensor": "branch_b",
+      "row": 0,
+      "col": 3,
+      "max_abs_diff": 0.00266171,
+      "failed": true
+    },
+    {
+      "node": "merge",
+      "op": "Concat",
+      "tensor": "merged",
+      "row": 1,
+      "col": 0,
+      "max_abs_diff": 0.00266171,
+      "failed": true
+    },
+    {
+      "node": "out_relu",
+      "op": "Relu",
+      "tensor": "output",
+      "row": 1,
+      "col": 1,
+      "max_abs_diff": 0.00266171,
+      "failed": true
+    }
+  ],
+  "inputs_used": {
+    "input": [
+      1,
+      3,
+      8,
+      8
+    ]
+  }
+}

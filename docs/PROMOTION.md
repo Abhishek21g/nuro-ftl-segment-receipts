@@ -1,36 +1,45 @@
-# Promotion — FTL Segment Receipts v0.2
+# Promotion v1.0 — Silent Regression Hunter
 
-## What's new vs v0.1
+## The real problem (from Nuro's blog)
 
-| v0.1 (disk-blocked ship) | v0.2 (full launch) |
-|--------------------------|---------------------|
-| JSON graphs only | Real `.onnx` + **OnnxRuntime parity** |
-| Synthetic parity | `parity_mode: onnxruntime` on receipts |
-| No merge story | **`segment-receipts diff`** + site before/after viz |
+> "Third party compilers are notorious for causing silent regressions."
+
+FTL's segment breaker (Fig 6) exists **because of this** — not as an abstract compiler feature.
+
+## What to say (honest, high-signal)
+
+**Don't say:** "I built a segment receipt tool inspired by FTL."
+
+**Do say:** "I built a tool that finds *where* ONNX compile paths silently diverge and outputs the exact FP32 segment breaker Nuro's blog describes — tested on real ORT intermediate tensor dumps."
 
 ## Pitch
 
-Open ONNX stitch auditor inspired by Nuro's FTL blog — compiler islands, segment breaker, ORT parity, early publish, multi-GPU splits. **New:** merge diff shows when greedy segmentation over-splits (4 islands → 1).
-
-## Share
-
-- Demo: https://enaguthi.com/nuro-ftl-receipts/site/
-- Repo: https://github.com/Abhishek21g/nuro-ftl-segment-receipts
-
-## Outreach (copy-paste)
-
 ```
-Built an open ONNX segment + parity audit tool inspired by Nuro's published
-FTL architecture (multi-compiler islands, segment breaker, early publish,
-merge diff for stitch overhead).
+Silent regressions in TRT/FP16 compiler islands don't crash — they drift perception.
 
-Demo: https://enaguthi.com/nuro-ftl-receipts/site/
+I built an open scanner that:
+  • dumps every ONNX intermediate activation
+  • diffs reference vs FP16/optimized compile path
+  • pinpoints the FIRST failing node in topo order
+  • emits FTL-style break_before_nodes / force_fp32 rules
+
+Demo: https://enaguthi.com/nuro-ftl-receipts/site/demo/regression_report.html
 Repo: https://github.com/Abhishek21g/nuro-ftl-segment-receipts
 
-Third-party tool from public blog specs — not affiliated with Nuro.
-Interested in compiler / ML infra roles.
+Third-party tool from Nuro's public FTL blog — not affiliated.
 ```
+
+## Where this lands
+
+| Audience | Why they care |
+|----------|----------------|
+| Nuro ML infra | Same problem their FTL segment breaker solves |
+| Any AV perception team | ONNX→TRT handoff with silent drift |
+| Compiler engineers | Intermediate tensor diff is standard debug — tool automates it |
 
 ## Channels
 
-LinkedIn · Nuro FTL Medium comment · careers applications · Show HN · r/MachineLearning
+1. LinkedIn — lead with the **silent regression** problem, not the tool name
+2. Comment on Nuro FTL Medium post — technical, link regression report
+3. Nuro careers — ML compiler / perception infra roles
+4. Show HN — "Finding silent ONNX compile regressions before deployment"

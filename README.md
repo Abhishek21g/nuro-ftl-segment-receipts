@@ -1,22 +1,17 @@
-# FTL Segment Receipts
+# Silent Regression Hunter
 
-Open ONNX segment + parity audit harness **inspired by** [Nuro's published FTL compiler architecture](https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67) — not affiliated with Nuro, Inc.
+**The problem Nuro's FTL compiler solves:** third-party compilers (TensorRT, FP16 paths) cause *silent* numerical regressions — perception drifts without crashing. Engineers insert **FP32 segment breakers** at specific nodes to isolate drift ([FTL blog Fig 6](https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67)).
 
-## What's new in v0.2
+**This tool answers:** *where does your ONNX compile path first diverge, and which node should get a breaker?*
 
-- **Real ONNX + OnnxRuntime** — parity probes on actual `.onnx` models (not just JSON graphs)
-- **`segment-receipts diff`** — before/after adjacent-segment merge with stitch-overhead analysis
-- **Merge diff on demo site** — interactive before/after islands visualization
+Not affiliated with Nuro, Inc.
 
-## Receipt covers
+## What it does (not a toy segment diagram)
 
-1. **Compiler islands** — greedy topological segmentation with YAML breaker rules
-2. **Backend + dtype policy** — TensorRT / ORT / custom-kernel slots per segment
-3. **Numerical parity** — ORT tolerance report (`parity_mode` in receipt JSON)
-4. **Latency budget** — per-segment estimates and total stitch cost
-5. **Early publish ordering** — priority table for marked outputs
-6. **Multi-GPU splits** — cross-gpu-copy insertion points
-7. **Merge diff** — auto-written as `merge_diff.json` on every `run`
+1. **Augments** your ONNX graph to expose every intermediate activation
+2. **Runs** reference path (ORT, optimizations off) vs candidate (FP16 activations, ORT fusion, or golden npz)
+3. **Diffs** each tensor — finds first failure in topological order
+4. **Outputs** FTL-style `break_before_nodes` / `force_fp32_nodes` recommendations
 
 ## Install
 
@@ -25,25 +20,34 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,onnx]"
 ```
 
-## CLI
+## Primary workflow
 
 ```bash
-# Preview segments
-segment-receipts plan examples/models/branch.onnx -r examples/rules/default.yaml
+# Find silent regressions (default: FP16 activation drift)
+segment-receipts scan model.onnx -o receipts/scan
 
-# Before/after merge comparison
-segment-receipts diff examples/models/chain.onnx -r examples/rules/merge_demo.yaml
+# ORT graph-fusion drift
+segment-receipts scan model.onnx --candidate optimized
 
-# Full audit → receipt.json + merge_diff.json + receipt.html
-segment-receipts run examples/models/branch.onnx -r examples/rules/default.yaml -o receipts/demo
+# Export validation vs saved golden tensors
+segment-receipts scan model.onnx --candidate golden --golden golden.npz
+```
 
-segment-receipts report receipts/demo/receipt.json
+Outputs: `regression_report.json` + `regression_report.html` with graph heatmap.
+
+## Secondary: stitch receipts
+
+After breakers are clean, generate segment stitch receipts:
+
+```bash
+segment-receipts plan model.onnx -r rules.yaml
+segment-receipts run model.onnx -r rules.yaml -o receipts/stitch
 ```
 
 ## Demo
 
-- **Site:** [enaguthi.com/nuro-ftl-receipts/site/](https://enaguthi.com/nuro-ftl-receipts/site/)
-- **Live receipt:** [demo/receipt.html](https://enaguthi.com/nuro-ftl-receipts/site/demo/receipt.html)
+- **Site:** https://enaguthi.com/nuro-ftl-receipts/site/
+- **Live regression report:** https://enaguthi.com/nuro-ftl-receipts/site/demo/regression_report.html
 
 ## Test
 
