@@ -1,58 +1,48 @@
-# Silent Regression Hunter
+# FTL Segment Receipts — Silent Regression Hunter
 
-**The problem Nuro's FTL compiler solves:** third-party compilers (TensorRT, FP16 paths) cause *silent* numerical regressions — perception drifts without crashing. Engineers insert **FP32 segment breakers** at specific nodes to isolate drift ([FTL blog Fig 6](https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67)).
+Find **where ONNX compile paths silently diverge** and get FTL-style segment breaker rules — inspired by [Nuro's FTL blog](https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67), not affiliated with Nuro, Inc.
 
-**This tool answers:** *where does your ONNX compile path first diverge, and which node should get a breaker?*
+> "Third party compilers are notorious for causing silent regressions." — Nuro FTL blog
 
-Not affiliated with Nuro, Inc.
-
-## What it does (not a toy segment diagram)
-
-1. **Augments** your ONNX graph to expose every intermediate activation
-2. **Runs** reference path (ORT, optimizations off) vs candidate (FP16 activations, ORT fusion, or golden npz)
-3. **Diffs** each tensor — finds first failure in topological order
-4. **Outputs** FTL-style `break_before_nodes` / `force_fp32_nodes` recommendations
-
-## Install
+## Gold workflow
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,onnx]"
+
+# Preview risks before run
+segment-receipts plan examples/models/branch.onnx -r examples/rules/default.yaml
+
+# Full pipeline → out/receipts/<run-id>/
+segment-receipts run examples/models/resnet18-mini.onnx -o out/receipts
+
+# Diagnose silent regressions + breaker gaps
+segment-receipts doctor out/receipts/<run-id>
+
+# Regenerate report.md + HTML
+segment-receipts report out/receipts/<run-id>
 ```
 
-## Primary workflow
+## Artifact trail (`out/receipts/<run-id>/`)
 
-```bash
-# Find silent regressions (default: FP16 activation drift)
-segment-receipts scan model.onnx -o receipts/scan
-
-# ORT graph-fusion drift
-segment-receipts scan model.onnx --candidate optimized
-
-# Export validation vs saved golden tensors
-segment-receipts scan model.onnx --candidate golden --golden golden.npz
-```
-
-Outputs: `regression_report.json` + `regression_report.html` with graph heatmap.
-
-## Secondary: stitch receipts
-
-After breakers are clean, generate segment stitch receipts:
-
-```bash
-segment-receipts plan model.onnx -r rules.yaml
-segment-receipts run model.onnx -r rules.yaml -o receipts/stitch
-```
+| File | Purpose |
+|------|---------|
+| `manifest.json` | Run metadata |
+| `summary.json` | Doctor-ready summary |
+| `regression_report.json` | Per-tensor divergence scan |
+| `parity.json` | Output parity results |
+| `receipt.json` | Compiler island stitch receipt |
+| `rules.from-scan.yaml` | Auto-generated breaker rules |
+| `report.md` | Human-readable report |
 
 ## Demo
 
-- **Site:** https://enaguthi.com/nuro-ftl-receipts/site/
-- **Live regression report:** https://enaguthi.com/nuro-ftl-receipts/site/demo/regression_report.html
+- https://enaguthi.com/nuro-ftl-receipts/site/
+- https://enaguthi.com/nuro-ftl-receipts/site/demo/regression_report.html
 
 ## Test
 
 ```bash
-pytest tests/ -v
+pytest tests/ -v   # 52+ tests
 ```
 
 ## License

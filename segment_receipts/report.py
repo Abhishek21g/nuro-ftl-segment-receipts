@@ -154,3 +154,63 @@ def write_html_report(receipt_path: Path, output_path: Path | None = None) -> Pa
 
     out.write_text(page)
     return out
+
+
+def write_markdown_report(run_dir: Path) -> Path:
+    """Gold artifact: human-readable report.md in run directory."""
+    run_dir = Path(run_dir)
+    lines: list[str] = ["# FTL Segment Receipt — Run Report", ""]
+
+    manifest_path = run_dir / "manifest.json"
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text())
+        lines.append(f"- **Run ID:** `{manifest.get('run_id', run_dir.name)}`")
+        lines.append(f"- **Model:** `{manifest.get('model', '?')}`")
+        lines.append(f"- **Rules:** `{manifest.get('rules', '?')}`")
+        lines.append(f"- **Candidate path:** `{manifest.get('candidate', '?')}`")
+        lines.append("")
+
+    summary_path = run_dir / "summary.json"
+    if summary_path.exists():
+        s = json.loads(summary_path.read_text())
+        lines.append("## Summary")
+        lines.append(f"- Doctor status: **{s.get('status', '?')}**")
+        lines.append(f"- Regression: {s.get('tensors_failed', '?')}/{s.get('tensors_compared', '?')} tensors failed")
+        lines.append(f"- Segments: {s.get('segment_count', '?')}")
+        lines.append(f"- Parity: {s.get('parity_passed', '?')}/{s.get('parity_total', '?')} passed")
+        if s.get("first_failure_node"):
+            lines.append(f"- First failure node: `{s['first_failure_node']}`")
+        lines.append("")
+
+    reg_path = run_dir / "regression_report.json"
+    if reg_path.exists():
+        reg = json.loads(reg_path.read_text())
+        lines.append("## Silent regression scan")
+        lines.append(reg.get("problem", ""))
+        lines.append("")
+        recs = reg.get("breaker_recommendations", [])
+        if recs:
+            lines.append("### Recommended segment breakers")
+            for r in recs[:3]:
+                lines.append(f"- `{r['node_name']}` ({r['op_type']}): max Δ {r['max_abs_diff']:.2e}")
+            lines.append("")
+
+    receipt_path = run_dir / "receipt.json"
+    if receipt_path.exists():
+        receipt = json.loads(receipt_path.read_text())
+        lines.append("## Compiler islands")
+        for seg in receipt.get("segments", []):
+            nodes = seg.get("node_names", [])
+            lines.append(
+                f"- Island {seg['id']}: {seg['backend']}/{seg['dtype']} "
+                f"({len(nodes)} nodes, {seg.get('estimated_ms', 0):.3f} ms)"
+            )
+        lines.append("")
+
+    lines.append("---")
+    lines.append("*Third-party tool inspired by Nuro's published FTL architecture. Not affiliated with Nuro, Inc.*")
+
+    out = run_dir / "report.md"
+    out.write_text("\n".join(lines))
+    return out
+

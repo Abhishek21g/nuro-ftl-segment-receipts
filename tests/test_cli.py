@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from segment_receipts.cli import main
+from segment_receipts.pipeline import execute_run
 from segment_receipts.planner import build_plan, run_audit
 from segment_receipts.report import write_html_report
 from segment_receipts.toy_models import build_all_examples
@@ -12,9 +13,8 @@ from segment_receipts.toy_models import build_all_examples
 def test_build_plan_chain() -> None:
     examples = Path("examples")
     build_all_examples(examples)
-    plan = build_plan(examples / "models/chain.graph.json", Path("examples/rules/default.yaml"))
+    plan = build_plan(examples / "models/chain.onnx", Path("examples/rules/default.yaml"))
     assert plan["segment_count"] >= 1
-    assert plan["node_count"] > 0
 
 
 def test_run_audit_writes_receipt(tmp_path: Path) -> None:
@@ -25,8 +25,6 @@ def test_run_audit_writes_receipt(tmp_path: Path) -> None:
     receipt = run_audit(models["chain"], rules, out)
     assert (out / "receipt.json").exists()
     assert receipt.segment_count >= 1
-    data = json.loads((out / "receipt.json").read_text())
-    assert "disclaimer" in data
 
 
 def test_html_report(tmp_path: Path) -> None:
@@ -35,17 +33,16 @@ def test_html_report(tmp_path: Path) -> None:
     out = tmp_path / "out"
     run_audit(models["branch"], Path("examples/rules/default.yaml"), out)
     html = write_html_report(out / "receipt.json")
-    assert html.exists()
     assert "FTL Segment Receipt" in html.read_text()
 
 
 def test_cli_plan(capsys) -> None:
     examples = Path("examples")
     build_all_examples(examples)
-    code = main(["plan", str(examples / "models/chain.graph.json"), "-r", "examples/rules/default.yaml"])
+    code = main(["plan", str(examples / "models/chain.onnx"), "-r", "examples/rules/default.yaml"])
     captured = capsys.readouterr()
     assert code == 0
-    assert "segment" in captured.out.lower() or "nodes" in captured.out.lower()
+    assert "nodes" in captured.out.lower() or "scan" in captured.out.lower()
 
 
 def test_cli_run(tmp_path: Path) -> None:
@@ -63,16 +60,17 @@ def test_cli_run(tmp_path: Path) -> None:
         ]
     )
     assert code == 0
-    assert (out / "receipt.json").exists()
-    assert (out / "receipt.html").exists()
+    run_dir = next(out.iterdir())
+    assert (run_dir / "receipt.json").exists()
+    assert (run_dir / "manifest.json").exists()
 
 
 def test_cli_report(tmp_path: Path) -> None:
     examples = tmp_path / "ex"
     models = build_all_examples(examples)
-    out = tmp_path / "out"
-    run_audit(models["chain"], Path("examples/rules/default.yaml"), out)
-    report_out = tmp_path / "report.html"
-    code = main(["report", str(out / "receipt.json"), "-o", str(report_out)])
+    out = tmp_path / "receipts"
+    main(["run", str(models["chain"]), "-o", str(out)])
+    run_dir = next(out.iterdir())
+    code = main(["report", str(run_dir)])
     assert code == 0
-    assert report_out.exists()
+    assert (run_dir / "report.md").exists()

@@ -164,11 +164,23 @@ def _graph_layout(model_path: Path, divergences: list[TensorDivergence]) -> list
 def _recommend_breakers(
     divergences: list[TensorDivergence],
     limit: int = 3,
+    first_failure: TensorDivergence | None = None,
 ) -> list[BreakerRecommendation]:
     failing = [d for d in divergences if not d.passed]
     failing.sort(key=lambda d: d.max_abs_diff, reverse=True)
+
+    # Always recommend breaker at first topo failure
+    if first_failure and first_failure not in failing:
+        failing.append(first_failure)
+    elif first_failure:
+        failing = [first_failure] + [d for d in failing if d.producer_node != first_failure.producer_node]
+
+    seen: set[str] = set()
     recs: list[BreakerRecommendation] = []
-    for d in failing[:limit]:
+    for d in failing:
+        if d.producer_node in seen:
+            continue
+        seen.add(d.producer_node)
         recs.append(
             BreakerRecommendation(
                 node_name=d.producer_node,
@@ -186,6 +198,8 @@ def _recommend_breakers(
                 },
             )
         )
+        if len(recs) >= limit:
+            break
     return recs
 
 
@@ -296,7 +310,7 @@ def scan_regression(
         tensors_failed=len(failed),
         first_failure=first_failure,
         divergences=divergences,
-        breaker_recommendations=_recommend_breakers(divergences),
+        breaker_recommendations=_recommend_breakers(divergences, first_failure=first_failure),
         graph_layout=_graph_layout(model_path, divergences),
         inputs_used={k: list(v.shape) for k, v in inputs.items()},
     )

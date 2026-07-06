@@ -6,6 +6,23 @@ import onnx
 from onnx import TensorProto, helper
 
 
+def resolve_onnx_path(model_path: Path | str) -> Path:
+    """Prefer .onnx on disk; accept .graph.json if sibling .onnx exists."""
+    path = Path(model_path)
+    if path.suffix == ".onnx":
+        return path
+    if path.name.endswith(".graph.json"):
+        sibling = path.with_name(path.name.replace(".graph.json", ".onnx"))
+        if sibling.exists():
+            return sibling
+    if path.suffix == ".json" and path.with_suffix(".onnx").exists():
+        return path.with_suffix(".onnx")
+    raise ValueError(
+        f"Regression scan requires ONNX format: {path}. "
+        "Generate .onnx alongside .graph.json or pass an .onnx path."
+    )
+
+
 def augment_intermediate_outputs(
     model_path: Path | str,
     max_tensors: int = 64,
@@ -16,7 +33,8 @@ def augment_intermediate_outputs(
     This is how compiler teams localize silent regressions: run the same inputs
     through two execution paths and diff every activation boundary.
     """
-    model = onnx.load(str(model_path))
+    onnx_path = resolve_onnx_path(model_path)
+    model = onnx.load(str(onnx_path))
     graph = model.graph
     existing = {o.name for o in graph.output}
 
