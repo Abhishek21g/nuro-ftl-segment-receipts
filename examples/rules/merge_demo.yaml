@@ -1,0 +1,9 @@
+# Split every Relu into its own island — all ORT/fp32, mergeable afterward
+default_backend: onnxruntime
+default_dtype: fp32
+
+break_on_op:
+  - Relu
+
+early_publish:
+  output: 0

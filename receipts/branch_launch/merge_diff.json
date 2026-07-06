@@ -1,0 +1,73 @@
+{
+  "model": "examples/models/branch.onnx",
+  "rules": "examples/rules/default.yaml",
+  "before": {
+    "segment_count": 2,
+    "latency_budget_ms": 3.25,
+    "segments": [
+      {
+        "id": 0,
+        "backend": "onnxruntime",
+        "dtype": "fp32",
+        "nodes": [
+          "stem_conv",
+          "stem_relu",
+          "branch_a_conv",
+          "branch_b_conv"
+        ],
+        "node_count": 4,
+        "estimated_ms": 3.05,
+        "reason": "default"
+      },
+      {
+        "id": 1,
+        "backend": "onnxruntime",
+        "dtype": "fp32",
+        "nodes": [
+          "merge",
+          "out_relu"
+        ],
+        "node_count": 2,
+        "estimated_ms": 0.2,
+        "reason": "break_on_op:Concat"
+      }
+    ]
+  },
+  "after": {
+    "segment_count": 1,
+    "latency_budget_ms": 3.25,
+    "segments": [
+      {
+        "id": 0,
+        "backend": "onnxruntime",
+        "dtype": "fp32",
+        "nodes": [
+          "stem_conv",
+          "stem_relu",
+          "branch_a_conv",
+          "branch_b_conv",
+          "merge",
+          "out_relu"
+        ],
+        "node_count": 6,
+        "estimated_ms": 3.25,
+        "reason": "default"
+      }
+    ]
+  },
+  "merged_pairs": [
+    {
+      "into_segment": 0,
+      "from_segments": [
+        0,
+        1
+      ],
+      "backend": "onnxruntime",
+      "dtype": "fp32"
+    }
+  ],
+  "stitch_overhead_eliminated": 1,
+  "latency_savings_ms": 0.0,
+  "latency_savings_pct": 0.0,
+  "recommendation": "Merge reduces stitch points from 2 to 1; latency impact is small but fewer handoffs may help executor complexity."
+}

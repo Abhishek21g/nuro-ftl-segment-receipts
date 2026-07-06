@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from segment_receipts.merge_diff import build_merge_diff
 from segment_receipts.planner import build_plan, run_audit
 from segment_receipts.report import write_html_report
 
@@ -47,6 +48,16 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("receipt", type=Path, help="Path to receipt.json")
     report.add_argument("-o", "--output", type=Path, default=None)
     report.set_defaults(handler=_cmd_report)
+
+    diff = sub.add_parser(
+        "diff",
+        help="Compare segmentation before/after adjacent-segment merge (stitch overhead).",
+    )
+    diff.add_argument("model", type=Path)
+    diff.add_argument("-r", "--rules", type=Path, required=True)
+    diff.add_argument("-o", "--output", type=Path, default=None, help="Write merge_diff.json")
+    diff.add_argument("--json", action="store_true")
+    diff.set_defaults(handler=_cmd_diff)
 
     return parser
 
@@ -94,4 +105,20 @@ def _cmd_run(args: argparse.Namespace) -> int:
 def _cmd_report(args: argparse.Namespace) -> int:
     out = write_html_report(args.receipt, args.output)
     print(f"Wrote {out}")
+    return 0
+
+
+def _cmd_diff(args: argparse.Namespace) -> int:
+    result = build_merge_diff(str(args.model), str(args.rules))
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(result, indent=2))
+        print(f"Wrote {args.output}")
+    if args.json or not args.output:
+        print(json.dumps(result, indent=2))
+    else:
+        b, a = result["before"]["segment_count"], result["after"]["segment_count"]
+        print(f"Before: {b} segments ({result['before']['latency_budget_ms']:.3f} ms)")
+        print(f"After:  {a} segments ({result['after']['latency_budget_ms']:.3f} ms)")
+        print(result["recommendation"])
     return 0

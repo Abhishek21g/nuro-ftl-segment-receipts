@@ -8,8 +8,9 @@ from segment_receipts.early_publish import build_early_publish_order
 from segment_receipts.graph import GraphModel, load_graph
 from segment_receipts.gpu_split import plan_gpu_splits
 from segment_receipts.latency import apply_latency_estimates
+from segment_receipts.merge_diff import build_merge_diff
 from segment_receipts.models import Receipt
-from segment_receipts.parity import probe_full_model_parity
+from segment_receipts.parity import parity_mode, probe_full_model_parity
 from segment_receipts.rules import SegmentRules
 from segment_receipts.segmenter import greedy_segment, merge_adjacent_segments
 
@@ -95,9 +96,13 @@ def run_audit(
         early_publish=early,
         gpu_copies=gpu_copies,
         stitch_order=stitch_order,
+        parity_mode=parity_mode(),
     )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     receipt_path = output_dir / "receipt.json"
     receipt_path.write_text(json.dumps(receipt.to_dict(), indent=2))
+    (output_dir / "merge_diff.json").write_text(
+        json.dumps(build_merge_diff(str(model_path), str(rules_path)), indent=2)
+    )
     return receipt

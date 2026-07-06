@@ -182,12 +182,69 @@ def linear_chain(path: Path, depth: int = 3) -> Path:
 
 def branched_graph(path: Path) -> Path:
     save_graph_json(_branched_graph(), path.with_suffix(".graph.json"))
-    return path.with_suffix(".graph.json")
+    try:
+        import numpy as np
+        import onnx
+        from onnx import TensorProto, helper, numpy_helper
+
+        w0 = numpy_helper.from_array(np.random.randn(4, 3, 1, 1).astype(np.float32), "w0")
+        w1 = numpy_helper.from_array(np.random.randn(4, 4, 1, 1).astype(np.float32), "w1")
+        w2 = numpy_helper.from_array(np.random.randn(4, 4, 1, 1).astype(np.float32), "w2")
+        nodes = [
+            helper.make_node("Conv", ["input", "w0"], ["stem"], name="stem_conv", kernel_shape=[1, 1]),
+            helper.make_node("Relu", ["stem"], ["stem_relu"], name="stem_relu"),
+            helper.make_node("Conv", ["stem_relu", "w1"], ["branch_a"], name="branch_a_conv", kernel_shape=[1, 1]),
+            helper.make_node("Conv", ["stem_relu", "w2"], ["branch_b"], name="branch_b_conv", kernel_shape=[1, 1]),
+            helper.make_node("Concat", ["branch_a", "branch_b"], ["merged"], name="merge", axis=1),
+            helper.make_node("Relu", ["merged"], ["output"], name="out_relu"),
+        ]
+        g = helper.make_graph(
+            nodes,
+            "branched",
+            [helper.make_tensor_value_info("input", TensorProto.FLOAT, [1, 3, 8, 8])],
+            [helper.make_tensor_value_info("output", TensorProto.FLOAT, [1, 8, 8, 8])],
+            initializer=[w0, w1, w2],
+        )
+        model = helper.make_model(g, opset_imports=[helper.make_opsetid("", 13)])
+        path.parent.mkdir(parents=True, exist_ok=True)
+        onnx.save(model, str(path))
+        return path
+    except ImportError:
+        return path.with_suffix(".graph.json")
 
 
 def multi_output_head(path: Path) -> Path:
     save_graph_json(_multi_output_graph(), path.with_suffix(".graph.json"))
-    return path.with_suffix(".graph.json")
+    try:
+        import numpy as np
+        import onnx
+        from onnx import TensorProto, helper, numpy_helper
+
+        w0 = numpy_helper.from_array(np.random.randn(8, 3, 1, 1).astype(np.float32), "w0")
+        w1 = numpy_helper.from_array(np.random.randn(4, 8, 1, 1).astype(np.float32), "w1")
+        w2 = numpy_helper.from_array(np.random.randn(2, 8, 1, 1).astype(np.float32), "w2")
+        nodes = [
+            helper.make_node("Conv", ["input", "w0"], ["trunk"], name="trunk_conv", kernel_shape=[1, 1]),
+            helper.make_node("Relu", ["trunk"], ["trunk_relu"], name="trunk_relu"),
+            helper.make_node("Conv", ["trunk_relu", "w1"], ["head_boxes"], name="boxes_head", kernel_shape=[1, 1]),
+            helper.make_node("Conv", ["trunk_relu", "w2"], ["head_classes"], name="classes_head", kernel_shape=[1, 1]),
+        ]
+        g = helper.make_graph(
+            nodes,
+            "multi_output",
+            [helper.make_tensor_value_info("input", TensorProto.FLOAT, [1, 3, 16, 16])],
+            [
+                helper.make_tensor_value_info("head_boxes", TensorProto.FLOAT, [1, 4, 16, 16]),
+                helper.make_tensor_value_info("head_classes", TensorProto.FLOAT, [1, 2, 16, 16]),
+            ],
+            initializer=[w0, w1, w2],
+        )
+        model = helper.make_model(g, opset_imports=[helper.make_opsetid("", 13)])
+        path.parent.mkdir(parents=True, exist_ok=True)
+        onnx.save(model, str(path))
+        return path
+    except ImportError:
+        return path.with_suffix(".graph.json")
 
 
 def build_all_examples(base: Path) -> dict[str, Path]:

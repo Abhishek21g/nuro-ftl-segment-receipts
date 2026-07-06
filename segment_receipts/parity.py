@@ -9,6 +9,10 @@ from segment_receipts.models import ParityResult
 _ORT_AVAILABLE: bool | None = None
 
 
+def parity_mode() -> str:
+    return "onnxruntime" if ort_available() else "synthetic"
+
+
 def ort_available() -> bool:
     global _ORT_AVAILABLE
     if _ORT_AVAILABLE is None:

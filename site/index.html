@@ -44,6 +44,23 @@
       </div>
     </section>
 
+    <section class="section" id="merge-diff">
+      <h2>Before / after segment merge</h2>
+      <p class="section-lead">Greedy segmentation can over-split. Merge collapses adjacent compatible islands and removes stitch overhead.</p>
+      <div class="merge-compare" id="merge-compare">
+        <div class="merge-col">
+          <h3>Before merge</h3>
+          <div id="merge-before" class="merge-stack"></div>
+        </div>
+        <div class="merge-arrow">→</div>
+        <div class="merge-col">
+          <h3>After merge</h3>
+          <div id="merge-after" class="merge-stack"></div>
+        </div>
+      </div>
+      <p class="merge-rec" id="merge-rec"></p>
+    </section>
+
     <section class="section" id="how">
       <h2>What the receipt captures</h2>
       <div class="feature-grid">

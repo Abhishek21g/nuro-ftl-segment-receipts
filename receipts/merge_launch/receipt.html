@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Segment Receipt — branch.onnx</title>
+  <title>Segment Receipt — chain.onnx</title>
   <style>
     :root {
       --bg: #0f1419;
@@ -42,19 +42,19 @@
 <body>
   <main>
     <h1>FTL Segment Receipt</h1>
-    <p class="meta">Model: <code>examples/models/branch.onnx</code><br>
-    Rules: <code>examples/rules/default.yaml</code></p>
+    <p class="meta">Model: <code>examples/models/chain.onnx</code><br>
+    Rules: <code>examples/rules/merge_demo.yaml</code></p>
 
     <div class="cards">
       <div class="card"><span>Nodes</span><strong>6</strong></div>
-      <div class="card"><span>Segments</span><strong>2</strong></div>
-      <div class="card"><span>Latency budget</span><strong>3.25 ms</strong></div>
+      <div class="card"><span>Segments</span><strong>4</strong></div>
+      <div class="card"><span>Latency budget</span><strong>3.75 ms</strong></div>
       <div class="card"><span>Parity checks</span><strong>1/1</strong></div>
     </div>
 
     <section>
       <h2>Stitch order</h2>
-      <div class="stitch">0 → 1</div>
+      <div class="stitch">0 → 1 → 2 → 3</div>
     </section>
 
     <section>
@@ -66,19 +66,37 @@
           <td>0</td>
           <td><code>onnxruntime</code></td>
           <td>fp32</td>
-          <td>4</td>
-          <td>3.050 ms</td>
+          <td>1</td>
+          <td>1.200 ms</td>
           <td>default</td>
-          <td><small>stem_conv, stem_relu, branch_a_conv</small></td>
+          <td><small>conv_0</small></td>
         </tr>
         <tr>
           <td>1</td>
           <td><code>onnxruntime</code></td>
           <td>fp32</td>
           <td>2</td>
-          <td>0.200 ms</td>
-          <td>break_on_op:Concat</td>
-          <td><small>merge, out_relu</small></td>
+          <td>1.250 ms</td>
+          <td>break_on_op:Relu</td>
+          <td><small>relu_0, conv_1</small></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>onnxruntime</code></td>
+          <td>fp32</td>
+          <td>2</td>
+          <td>1.250 ms</td>
+          <td>break_on_op:Relu</td>
+          <td><small>relu_1, conv_2</small></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>onnxruntime</code></td>
+          <td>fp32</td>
+          <td>1</td>
+          <td>0.050 ms</td>
+          <td>break_on_op:Relu</td>
+          <td><small>relu_2</small></td>
         </tr></tbody>
       </table>
     </section>
@@ -89,8 +107,8 @@
         <thead><tr><th>Seg</th><th>Output</th><th>Max Δ</th><th>Mean Δ</th><th>Status</th></tr></thead>
         <tbody>
         <tr class="pass">
-          <td>1</td>
-          <td><code>output</code></td>
+          <td>3</td>
+          <td><code>relu2</code></td>
           <td>0.00e+00</td>
           <td>0.00e+00</td>
           <td>pass</td>
@@ -104,10 +122,10 @@
         <thead><tr><th>Priority</th><th>Output</th><th>Producer</th><th>Ready</th></tr></thead>
         <tbody>
         <tr>
-          <td>1</td>
-          <td><code>output</code></td>
-          <td>seg 1</td>
-          <td>3.250 ms</td>
+          <td>100</td>
+          <td><code>relu2</code></td>
+          <td>seg 3</td>
+          <td>3.750 ms</td>
         </tr></tbody>
       </table>
     </section>

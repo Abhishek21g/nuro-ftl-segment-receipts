@@ -62,6 +62,7 @@ class Receipt:
     early_publish: list[EarlyPublishEntry]
     gpu_copies: list[GpuCopyPoint]
     stitch_order: list[int]
+    parity_mode: str = "synthetic"
     disclaimer: str = (
         "Third-party tool inspired by Nuro's published FTL architecture. "
         "Not affiliated with Nuro, Inc."

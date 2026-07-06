@@ -1,0 +1,95 @@
+{
+  "model": "examples/models/chain.onnx",
+  "rules": "examples/rules/merge_demo.yaml",
+  "before": {
+    "segment_count": 4,
+    "latency_budget_ms": 3.75,
+    "segments": [
+      {
+        "id": 0,
+        "backend": "onnxruntime",
+        "dtype": "fp32",
+        "nodes": [
+          "conv_0"
+        ],
+        "node_count": 1,
+        "estimated_ms": 1.2,
+        "reason": "default"
+      },
+      {
+        "id": 1,
+        "backend": "onnxruntime",
+        "dtype": "fp32",
+        "nodes": [
+          "relu_0",
+          "conv_1"
+        ],
+        "node_count": 2,
+        "estimated_ms": 1.25,
+        "reason": "break_on_op:Relu"
+      },
+      {
+        "id": 2,
+        "backend": "onnxruntime",
+        "dtype": "fp32",
+        "nodes": [
+          "relu_1",
+          "conv_2"
+        ],
+        "node_count": 2,
+        "estimated_ms": 1.25,
+        "reason": "break_on_op:Relu"
+      },
+      {
+        "id": 3,
+        "backend": "onnxruntime",
+        "dtype": "fp32",
+        "nodes": [
+          "relu_2"
+        ],
+        "node_count": 1,
+        "estimated_ms": 0.05,
+        "reason": "break_on_op:Relu"
+      }
+    ]
+  },
+  "after": {
+    "segment_count": 1,
+    "latency_budget_ms": 3.75,
+    "segments": [
+      {
+        "id": 0,
+        "backend": "onnxruntime",
+        "dtype": "fp32",
+        "nodes": [
+          "conv_0",
+          "relu_0",
+          "conv_1",
+          "relu_1",
+          "conv_2",
+          "relu_2"
+        ],
+        "node_count": 6,
+        "estimated_ms": 3.75,
+        "reason": "default"
+      }
+    ]
+  },
+  "merged_pairs": [
+    {
+      "into_segment": 0,
+      "from_segments": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "backend": "onnxruntime",
+      "dtype": "fp32"
+    }
+  ],
+  "stitch_overhead_eliminated": 3,
+  "latency_savings_ms": 0.0,
+  "latency_savings_pct": 0.0,
+  "recommendation": "Merge reduces stitch points from 4 to 1; latency impact is small but fewer handoffs may help executor complexity."
+}
