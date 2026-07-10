@@ -36,8 +36,14 @@ segment-receipts report out/receipts/<run-id>
 
 ## Demo
 
-- https://enaguthi.com/nuro-ftl-receipts/site/
-- https://enaguthi.com/nuro-ftl-receipts/site/demo/regression_report.html
+- **Dashboard** (Trust Me Bro–grade interactive site): https://enaguthi.com/nuro-ftl-receipts/site/
+- Live Runner + scenario library + tolerance charts
+- Sample regression report: https://enaguthi.com/nuro-ftl-receipts/site/demo/regression_report.html
+
+```bash
+bash scripts/sync-demo.sh   # refresh bundled scenario data
+bash scripts/publish-site.sh
+```
 
 ## Test
 

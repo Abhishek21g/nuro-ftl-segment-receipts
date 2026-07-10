@@ -1,125 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Find where ONNX compile paths silently diverge. FTL-style segment breaker recommendations from real ORT tensor scans.">
+  <meta name="description" content="Catch silent ONNX compile regressions before deploy. Interactive dashboard inspired by Nuro's FTL compiler architecture.">
   <title>Silent Regression Hunter — FTL Segment Receipts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand">
-      <span class="brand-mark">SRH</span>
-      <div>
-        <strong>Silent Regression Hunter</strong>
-        <span class="brand-sub">FTL Segment Receipts · v1.1</span>
-      </div>
-    </div>
-    <nav>
-      <a href="#problem">Problem</a>
-      <a href="#demo">60s demo</a>
-      <a href="#scan">Live run</a>
-      <a href="demo/regression_report.html">Reports</a>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <nav class="pill-nav" aria-label="Primary">
+      <a href="#/" class="pill-link" data-route="dashboard">Dashboard</a>
+      <a href="#/runner" class="pill-link" data-route="runner">Live Runner</a>
+      <a href="#/vision" class="pill-link" data-route="vision">The Vision</a>
     </nav>
-    <a class="nav-action" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts">GitHub</a>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch theme">
+      <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
+      <span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span>
+    </button>
   </header>
 
-  <main>
-    <section class="hero" id="top">
-      <div class="hero-copy">
-        <p class="eyebrow">Company problem · Nuro FTL blog</p>
-        <h1>Silent compiler regressions don't crash. They <em>drift</em>.</h1>
-        <p class="hero-text">
-          Nuro built FTL segment breakers because TensorRT and FP16 paths change numerics without errors.
-          This tool augments your ONNX graph, diffs <strong>every intermediate activation</strong>, pinpoints the
-          <strong>first failing node</strong>, and emits breaker YAML — the pre-deploy audit their public blog describes but doesn't ship.
-        </p>
-        <blockquote class="pull-quote">
-          "Third party compilers are notorious for causing silent regressions in the model's performance."
-          <cite>— <a href="https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67">Nuro FTL blog</a></cite>
-        </blockquote>
-        <div class="hero-actions">
-          <a class="button primary" href="demo/regression_report.html">Open regression report</a>
-          <a class="button secondary" href="#demo">60-second demo</a>
-        </div>
-      </div>
-
-      <aside class="hero-aside" id="scan">
-        <div class="aside-header">
-          <span class="live-dot"></span>
-          <span id="run-label">Live run · loading…</span>
-        </div>
-        <div class="scan-stats" id="scan-stats"></div>
-        <div class="doctor-status" id="doctor-status"></div>
-        <div class="first-failure" id="first-failure"></div>
-        <div class="graph-wrap">
-          <svg id="graph-svg" viewBox="0 0 580 280" role="img" aria-label="Divergence heatmap"></svg>
-        </div>
-        <div class="breaker-panel" id="breaker-panel"></div>
-      </aside>
-    </section>
-
-    <section class="section demo-block" id="demo">
-      <h2>60-second demo for a hiring manager</h2>
-      <p class="section-lead">No GPU. No Nuro credentials. Real ORT intermediate tensor scan on bundled <code>branch.onnx</code>.</p>
-      <pre class="code-block"><code>pip install nuro-ftl-segment-receipts[onnx]
-
-segment-receipts run examples/models/branch.onnx -o out/receipts
-segment-receipts doctor out/receipts/&lt;run-id&gt;
-open out/receipts/&lt;run-id&gt;/regression_report.html</code></pre>
-      <div class="artifact-grid">
-        <a class="artifact-card" href="demo/regression_report.html">
-          <h3>Regression report</h3>
-          <p>Graph heatmap + per-tensor Δ + breaker YAML</p>
-        </a>
-        <a class="artifact-card" href="demo/receipt.html">
-          <h3>Stitch receipt</h3>
-          <p>Compiler islands after auto-generated breakers</p>
-        </a>
-        <a class="artifact-card" href="demo/report.md">
-          <h3>report.md</h3>
-          <p>Human-readable run summary</p>
-        </a>
-        <a class="artifact-card" href="demo/rules.from-scan.yaml">
-          <h3>rules.from-scan.yaml</h3>
-          <p>Auto break_before_nodes from scan</p>
-        </a>
-      </div>
-    </section>
-
-    <section class="section" id="problem">
-      <h2>plan → run → doctor → report</h2>
-      <div class="flow-grid">
-        <article>
-          <h3>plan</h3>
-          <p>Preview segments + scan risks before spending compile cycles.</p>
-        </article>
-        <article>
-          <h3>run</h3>
-          <p>Scan → auto rules → stitch receipt → full artifact trail in <code>out/receipts/&lt;id&gt;/</code>.</p>
-        </article>
-        <article>
-          <h3>doctor</h3>
-          <p>Flags silent regressions, breaker gaps, parity failures. Exit 1 = don't ship.</p>
-        </article>
-        <article>
-          <h3>report</h3>
-          <p>Regenerates <code>report.md</code> + HTML from artifact dir.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section findings-block" id="findings">
-      <h2>Doctor findings (this demo run)</h2>
-      <ul class="findings-list" id="findings-list"></ul>
-    </section>
-
-    <p class="disclaimer">
-      Third-party open tool inspired by Nuro's published FTL architecture — not affiliated with Nuro, Inc.
-      Built by <a href="https://enaguthi.com">Abhishek Enaguthi</a>.
-    </p>
+  <main id="app">
   </main>
-  <script src="app.js"></script>
+
+  <footer class="site-footer">
+    <p>
+      Open tool inspired by <a href="https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67">Nuro's FTL compiler blog</a> — not affiliated with Nuro, Inc.
+      · <a href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts">GitHub</a>
+      · <a href="https://enaguthi.com">Abhishek Enaguthi</a>
+    </p>
+  </footer>
+
+  <script src="charts.js?v=2.0.0"></script>
+  <script src="app.js?v=2.0.0"></script>
 </body>
 </html>

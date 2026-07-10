@@ -1,9 +1,9 @@
 {
-  "run_id": "20260710T013413Z",
-  "model": "examples/models/branch.graph.json",
-  "rules": "out/receipts/20260710T013413Z/rules.from-scan.yaml",
+  "run_id": "20260710T013549Z",
+  "model": "examples/models/chain.onnx",
+  "rules": "out/receipts/20260710T013549Z/rules.from-scan.yaml",
   "candidate": "fp16_activations",
-  "created_at": "2026-07-10T01:34:13.947189+00:00",
+  "created_at": "2026-07-10T01:35:49.367615+00:00",
   "artifacts": [
     "manifest.json",
     "summary.json",

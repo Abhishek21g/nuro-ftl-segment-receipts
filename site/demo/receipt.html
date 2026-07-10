@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Segment Receipt — branch.onnx</title>
+  <title>Segment Receipt — branch.graph.json</title>
   <style>
     :root {
       --bg: #0f1419;
@@ -37,13 +37,16 @@
     code { font-size: 0.85em; }
     .disclaimer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid #2a3540; padding-top: 1.5rem; }
     .stitch { background: var(--panel); padding: 0.75rem 1rem; border-radius: 8px; font-family: monospace; }
+    .back-link { display:inline-block; margin-bottom:1rem; color:#cfe8d8; text-decoration:none; border:1px solid #2a3540; padding:0.4rem 0.7rem; border-radius:8px; font-size:0.9rem; }
+    .back-link:hover { border-color: var(--accent); color:#fff; }
   </style>
 </head>
 <body>
   <main>
+    <a class="back-link" href="../index.html">← Back to home</a>
     <h1>FTL Segment Receipt</h1>
-    <p class="meta">Model: <code>examples/models/branch.onnx</code><br>
-    Rules: <code>out/receipts/20260706T231316Z/rules.from-scan.yaml</code></p>
+    <p class="meta">Model: <code>examples/models/branch.graph.json</code><br>
+    Rules: <code>out/receipts/20260710T013413Z/rules.from-scan.yaml</code></p>
 
     <div class="cards">
       <div class="card"><span>Nodes</span><strong>6</strong></div>

@@ -1,0 +1,103 @@
+{
+  "product": "FTL Segment Receipts",
+  "version": "2.0",
+  "compile_paths": [
+    "fp16_activations"
+  ],
+  "tolerance_modes": [
+    {
+      "id": "strict",
+      "label": "Strict",
+      "atol": 1e-06,
+      "hint": "Tight tolerance \u2014 catches micro-drift before it compounds."
+    },
+    {
+      "id": "standard",
+      "label": "Standard",
+      "atol": 1e-05,
+      "hint": "Default ship gate \u2014 matches segment-receipts CLI defaults."
+    },
+    {
+      "id": "relaxed",
+      "label": "Relaxed",
+      "atol": 0.0001,
+      "hint": "Looser gate \u2014 shows how many failures disappear when teams widen tolerance (dangerous)."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "branch",
+      "title": "Branched Backbone",
+      "tagline": "6 layers \u00b7 1 output",
+      "description": "Fork-join CNN mimics perception branches. FP16 activation rounding drifts at the stem before either branch recovers.",
+      "nodes": 6,
+      "canaries": 1,
+      "model_path": "examples/models/branch.graph.json",
+      "tensors_compared": 6,
+      "tensors_failed": 6,
+      "first_failure_node": "stem_conv",
+      "status": "fail",
+      "segment_count": 3,
+      "parity": "1/1",
+      "data_prefix": "data/scenarios/branch",
+      "report_href": "demo/branch_regression_report.html"
+    },
+    {
+      "id": "chain",
+      "title": "Linear Chain",
+      "tagline": "6 layers \u00b7 sequential stack",
+      "description": "Deep linear conv stack \u2014 the simplest silent regression trap. Drift compounds layer by layer.",
+      "nodes": 6,
+      "canaries": 1,
+      "model_path": "examples/models/chain.onnx",
+      "tensors_compared": 6,
+      "tensors_failed": 6,
+      "first_failure_node": "conv_0",
+      "status": "fail",
+      "segment_count": 3,
+      "parity": "1/1",
+      "data_prefix": "data/scenarios/chain",
+      "report_href": "demo/chain_regression_report.html"
+    },
+    {
+      "id": "multi_output",
+      "title": "Multi-Output Head",
+      "tagline": "4 tensors \u00b7 early-publish",
+      "description": "Two detection heads from one trunk \u2014 models the FTL early-publish pattern where downstream only needs one output.",
+      "nodes": 4,
+      "canaries": 2,
+      "model_path": "examples/models/multi_output.graph.json",
+      "tensors_compared": 4,
+      "tensors_failed": 4,
+      "first_failure_node": "trunk_conv",
+      "status": "fail",
+      "segment_count": 3,
+      "parity": "2/2",
+      "data_prefix": "data/scenarios/multi_output",
+      "report_href": "demo/multi_output_regression_report.html"
+    },
+    {
+      "id": "resnet18_mini",
+      "title": "ResNet Mini",
+      "tagline": "9 layers \u00b7 deeper stack",
+      "description": "Blog Fig 5 class problem: export decomposition + FP16 islands on a realistic mini backbone.",
+      "nodes": 9,
+      "canaries": 1,
+      "model_path": "examples/models/resnet18-mini.onnx",
+      "tensors_compared": 9,
+      "tensors_failed": 9,
+      "first_failure_node": "block0_conv",
+      "status": "fail",
+      "segment_count": 3,
+      "parity": "1/1",
+      "data_prefix": "data/scenarios/resnet18_mini",
+      "report_href": "demo/resnet18_mini_regression_report.html"
+    }
+  ],
+  "stats": {
+    "scenarios": 4,
+    "compile_paths": 1,
+    "tolerance_modes": 3,
+    "total_tensor_checks": 25
+  }
+}

@@ -6,8 +6,8 @@
     "relu2"
   ],
   "initializers": [
-    "w2",
     "w1",
+    "w2",
     "w0"
   ],
   "nodes": [

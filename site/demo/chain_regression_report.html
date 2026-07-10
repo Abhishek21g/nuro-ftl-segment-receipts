@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Regression Report — branch.graph.json</title>
+  <title>Regression Report — chain.onnx</title>
   <style>
     :root { --bg:#0a0e12; --panel:#121a22; --text:#e8edf2; --muted:#8b9cb0; --accent:#e85d4c; --ok:#3d9a6a; }
     body { margin:0; font-family:system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
@@ -39,143 +39,143 @@
       <div class="stat"><span>Failed</span><strong>6</strong></div>
       <div class="stat"><span>Breakers</span><strong>3</strong></div>
     </div>
-    <div class="first-fail"><strong>First divergence in topo order:</strong> First failure at <code>stem_conv</code> (Conv) — max Δ 1.82e-03</div>
+    <div class="first-fail"><strong>First divergence in topo order:</strong> First failure at <code>conv_0</code> (Conv) — max Δ 2.10e-03</div>
     <h2>Graph heatmap</h2>
     <p style="color:var(--muted);font-size:0.9rem">Darker green = stable. Red = activation diverged between reference and candidate compile path.</p>
     <svg viewBox="0 0 600 248" role="img" aria-label="Graph divergence heatmap">
-        <g class="graph-node" data-node="stem_conv">
-          <rect x="40" y="80" width="130" height="52" rx="8" fill="rgb(217,40,40)" stroke="#3a4a58" stroke-width="1"/>
-          <text x="48" y="98" fill="#e8edf2" font-size="11" font-weight="600">stem_conv</text>
+        <g class="graph-node" data-node="conv_0">
+          <rect x="40" y="80" width="130" height="52" rx="8" fill="rgb(222,37,38)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="48" y="98" fill="#e8edf2" font-size="11" font-weight="600">conv_0</text>
           <text x="48" y="114" fill="#b8c5d0" font-size="10">Conv</text>
-          <text x="48" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 1.82e-03</text>
+          <text x="48" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 2.10e-03</text>
         </g>
-        <g class="graph-node" data-node="stem_relu">
-          <rect x="182" y="80" width="130" height="52" rx="8" fill="rgb(217,40,40)" stroke="#3a4a58" stroke-width="1"/>
-          <text x="190" y="98" fill="#e8edf2" font-size="11" font-weight="600">stem_relu</text>
+        <g class="graph-node" data-node="relu_0">
+          <rect x="182" y="80" width="130" height="52" rx="8" fill="rgb(215,40,40)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="190" y="98" fill="#e8edf2" font-size="11" font-weight="600">relu_0</text>
           <text x="190" y="114" fill="#b8c5d0" font-size="10">Relu</text>
-          <text x="190" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 1.82e-03</text>
+          <text x="190" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 1.79e-03</text>
         </g>
-        <g class="graph-node" data-node="branch_a_conv">
-          <rect x="324" y="80" width="130" height="52" rx="8" fill="rgb(219,38,39)" stroke="#3a4a58" stroke-width="1"/>
-          <text x="332" y="98" fill="#e8edf2" font-size="11" font-weight="600">branch_a_conv</text>
+        <g class="graph-node" data-node="conv_1">
+          <rect x="324" y="80" width="130" height="52" rx="8" fill="rgb(255,20,30)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="332" y="98" fill="#e8edf2" font-size="11" font-weight="600">conv_1</text>
           <text x="332" y="114" fill="#b8c5d0" font-size="10">Conv</text>
-          <text x="332" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 1.92e-03</text>
+          <text x="332" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 3.75e-03</text>
         </g>
-        <g class="graph-node" data-node="branch_b_conv">
-          <rect x="466" y="80" width="130" height="52" rx="8" fill="rgb(255,20,30)" stroke="#3a4a58" stroke-width="1"/>
-          <text x="474" y="98" fill="#e8edf2" font-size="11" font-weight="600">branch_b_conv</text>
-          <text x="474" y="114" fill="#b8c5d0" font-size="10">Conv</text>
-          <text x="474" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 3.64e-03</text>
+        <g class="graph-node" data-node="relu_1">
+          <rect x="466" y="80" width="130" height="52" rx="8" fill="rgb(209,44,42)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="474" y="98" fill="#e8edf2" font-size="11" font-weight="600">relu_1</text>
+          <text x="474" y="114" fill="#b8c5d0" font-size="10">Relu</text>
+          <text x="474" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 1.50e-03</text>
         </g>
-        <g class="graph-node" data-node="merge">
-          <rect x="40" y="144" width="130" height="52" rx="8" fill="rgb(255,20,30)" stroke="#3a4a58" stroke-width="1"/>
-          <text x="48" y="162" fill="#e8edf2" font-size="11" font-weight="600">merge</text>
-          <text x="48" y="178" fill="#b8c5d0" font-size="10">Concat</text>
-          <text x="48" y="190" fill="#fff" font-size="9" opacity="0.85">Δ 3.64e-03</text>
+        <g class="graph-node" data-node="conv_2">
+          <rect x="40" y="144" width="130" height="52" rx="8" fill="rgb(218,39,39)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="48" y="162" fill="#e8edf2" font-size="11" font-weight="600">conv_2</text>
+          <text x="48" y="178" fill="#b8c5d0" font-size="10">Conv</text>
+          <text x="48" y="190" fill="#fff" font-size="9" opacity="0.85">Δ 1.93e-03</text>
         </g>
-        <g class="graph-node" data-node="out_relu">
-          <rect x="182" y="144" width="130" height="52" rx="8" fill="rgb(255,20,30)" stroke="#3a4a58" stroke-width="1"/>
-          <text x="190" y="162" fill="#e8edf2" font-size="11" font-weight="600">out_relu</text>
+        <g class="graph-node" data-node="relu_2">
+          <rect x="182" y="144" width="130" height="52" rx="8" fill="rgb(212,42,41)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="190" y="162" fill="#e8edf2" font-size="11" font-weight="600">relu_2</text>
           <text x="190" y="178" fill="#b8c5d0" font-size="10">Relu</text>
-          <text x="190" y="190" fill="#fff" font-size="9" opacity="0.85">Δ 3.64e-03</text>
+          <text x="190" y="190" fill="#fff" font-size="9" opacity="0.85">Δ 1.62e-03</text>
         </g></svg>
     <h2>Top divergences</h2>
     <table>
       <thead><tr><th>Node</th><th>Op</th><th>Tensor</th><th>Max Δ</th><th>Rel L2</th><th>Status</th></tr></thead>
       <tbody>
         <tr class="FAIL">
-          <td><code>out_relu</code></td>
-          <td>Relu</td>
-          <td><code>output</code></td>
-          <td>3.64e-03</td>
-          <td>2.49e-04</td>
+          <td><code>conv_1</code></td>
+          <td>Conv</td>
+          <td><code>conv1</code></td>
+          <td>3.75e-03</td>
+          <td>1.97e-04</td>
           <td>FAIL</td>
         </tr>
         <tr class="FAIL">
-          <td><code>branch_b_conv</code></td>
+          <td><code>conv_0</code></td>
           <td>Conv</td>
-          <td><code>branch_b</code></td>
-          <td>3.64e-03</td>
+          <td><code>conv0</code></td>
+          <td>2.10e-03</td>
+          <td>2.16e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>conv_2</code></td>
+          <td>Conv</td>
+          <td><code>conv2</code></td>
+          <td>1.93e-03</td>
           <td>2.12e-04</td>
           <td>FAIL</td>
         </tr>
         <tr class="FAIL">
-          <td><code>merge</code></td>
-          <td>Concat</td>
-          <td><code>merged</code></td>
-          <td>3.64e-03</td>
-          <td>2.10e-04</td>
-          <td>FAIL</td>
-        </tr>
-        <tr class="FAIL">
-          <td><code>branch_a_conv</code></td>
-          <td>Conv</td>
-          <td><code>branch_a</code></td>
-          <td>1.92e-03</td>
-          <td>2.02e-04</td>
-          <td>FAIL</td>
-        </tr>
-        <tr class="FAIL">
-          <td><code>stem_conv</code></td>
-          <td>Conv</td>
-          <td><code>stem</code></td>
-          <td>1.82e-03</td>
-          <td>2.01e-04</td>
-          <td>FAIL</td>
-        </tr>
-        <tr class="FAIL">
-          <td><code>stem_relu</code></td>
+          <td><code>relu_0</code></td>
           <td>Relu</td>
-          <td><code>stem_relu</code></td>
-          <td>1.82e-03</td>
+          <td><code>relu0</code></td>
+          <td>1.79e-03</td>
+          <td>2.23e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>relu_2</code></td>
+          <td>Relu</td>
+          <td><code>relu2</code></td>
+          <td>1.62e-03</td>
           <td>2.16e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>relu_1</code></td>
+          <td>Relu</td>
+          <td><code>relu1</code></td>
+          <td>1.50e-03</td>
+          <td>1.60e-04</td>
           <td>FAIL</td>
         </tr></tbody>
     </table>
     <h2>Recommended segment breakers (FTL-style)</h2>
     
         <div class="breaker-card">
-          <h4>stem_conv <span>(Conv)</span></h4>
-          <p>Activation &#x27;stem&#x27; diverges max=1.82e-03 between reference and fp16_activations.</p>
+          <h4>conv_0 <span>(Conv)</span></h4>
+          <p>Activation &#x27;conv0&#x27; diverges max=2.10e-03 between reference and fp16_activations.</p>
           <pre>{
   &quot;break_before_nodes&quot;: [
-    &quot;stem_conv&quot;
+    &quot;conv_0&quot;
   ],
   &quot;force_fp32_nodes&quot;: [
-    &quot;stem_conv&quot;
+    &quot;conv_0&quot;
   ],
   &quot;backend_overrides&quot;: {
-    &quot;stem_conv&quot;: &quot;onnxruntime&quot;
+    &quot;conv_0&quot;: &quot;onnxruntime&quot;
   }
 }</pre>
         </div>
         <div class="breaker-card">
-          <h4>out_relu <span>(Relu)</span></h4>
-          <p>Activation &#x27;output&#x27; diverges max=3.64e-03 between reference and fp16_activations.</p>
+          <h4>conv_1 <span>(Conv)</span></h4>
+          <p>Activation &#x27;conv1&#x27; diverges max=3.75e-03 between reference and fp16_activations.</p>
           <pre>{
   &quot;break_before_nodes&quot;: [
-    &quot;out_relu&quot;
+    &quot;conv_1&quot;
   ],
   &quot;force_fp32_nodes&quot;: [
-    &quot;out_relu&quot;
+    &quot;conv_1&quot;
   ],
   &quot;backend_overrides&quot;: {
-    &quot;out_relu&quot;: &quot;onnxruntime&quot;
+    &quot;conv_1&quot;: &quot;onnxruntime&quot;
   }
 }</pre>
         </div>
         <div class="breaker-card">
-          <h4>branch_b_conv <span>(Conv)</span></h4>
-          <p>Activation &#x27;branch_b&#x27; diverges max=3.64e-03 between reference and fp16_activations.</p>
+          <h4>conv_2 <span>(Conv)</span></h4>
+          <p>Activation &#x27;conv2&#x27; diverges max=1.93e-03 between reference and fp16_activations.</p>
           <pre>{
   &quot;break_before_nodes&quot;: [
-    &quot;branch_b_conv&quot;
+    &quot;conv_2&quot;
   ],
   &quot;force_fp32_nodes&quot;: [
-    &quot;branch_b_conv&quot;
+    &quot;conv_2&quot;
   ],
   &quot;backend_overrides&quot;: {
-    &quot;branch_b_conv&quot;: &quot;onnxruntime&quot;
+    &quot;conv_2&quot;: &quot;onnxruntime&quot;
   }
 }</pre>
         </div>

@@ -95,10 +95,13 @@ def write_html_report(receipt_path: Path, output_path: Path | None = None) -> Pa
     code {{ font-size: 0.85em; }}
     .disclaimer {{ color: var(--muted); font-size: 0.85rem; border-top: 1px solid #2a3540; padding-top: 1.5rem; }}
     .stitch {{ background: var(--panel); padding: 0.75rem 1rem; border-radius: 8px; font-family: monospace; }}
+    .back-link {{ display:inline-block; margin-bottom:1rem; color:#cfe8d8; text-decoration:none; border:1px solid #2a3540; padding:0.4rem 0.7rem; border-radius:8px; font-size:0.9rem; }}
+    .back-link:hover {{ border-color: var(--accent); color:#fff; }}
   </style>
 </head>
 <body>
   <main>
+    <a class="back-link" href="../index.html">← Back to home</a>
     <h1>FTL Segment Receipt</h1>
     <p class="meta">Model: <code>{html.escape(data['model_path'])}</code><br>
     Rules: <code>{html.escape(data['rules_path'])}</code></p>

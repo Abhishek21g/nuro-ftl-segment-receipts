@@ -95,10 +95,13 @@ def write_regression_html(report_path: Path, output_path: Path | None = None) ->
     .breaker-card h4 span {{ color:var(--muted); font-weight:400; }}
     pre {{ background:#0a0e12; padding:0.75rem; border-radius:6px; overflow-x:auto; font-size:0.8rem; }}
     .disclaimer {{ color:var(--muted); font-size:0.85rem; margin-top:2rem; }}
+    .back-link {{ display:inline-block; margin-bottom:1rem; color:#ffd7d2; text-decoration:none; border:1px solid #3a4a58; padding:0.4rem 0.7rem; border-radius:8px; font-size:0.9rem; }}
+    .back-link:hover {{ border-color:#e85d4c; color:#fff; }}
   </style>
 </head>
 <body>
   <main>
+    <a class="back-link" href="../index.html">← Back to home</a>
     <h1>Silent Regression Report</h1>
     <p class="meta">{html.escape(data['reference_path'])} vs {html.escape(data['candidate_path'])} · rtol={data['rtol']} atol={data['atol']}</p>
     <div class="problem">{html.escape(data['problem'])}</div>

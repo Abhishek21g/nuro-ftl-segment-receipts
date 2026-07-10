@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Regression Report — resnet18-mini.onnx</title>
+  <style>
+    :root { --bg:#0a0e12; --panel:#121a22; --text:#e8edf2; --muted:#8b9cb0; --accent:#e85d4c; --ok:#3d9a6a; }
+    body { margin:0; font-family:system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+    main { max-width:1200px; margin:0 auto; padding:2rem 1.25rem 4rem; }
+    h1 { font-size:1.6rem; margin-bottom:0.25rem; }
+    .problem { background:var(--panel); border-left:4px solid var(--accent); padding:1rem 1.25rem; margin:1.5rem 0; border-radius:0 8px 8px 0; color:var(--muted); }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:0.75rem; margin:1.5rem 0; }
+    .stat { background:var(--panel); padding:0.9rem; border-radius:8px; }
+    .stat strong { display:block; font-size:1.4rem; color:var(--accent); }
+    .first-fail { background:#2a1818; border:1px solid #5a3030; padding:0.75rem 1rem; border-radius:8px; margin-bottom:1.5rem; }
+    svg { width:100%; background:var(--panel); border-radius:12px; margin:1rem 0; }
+    table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+    th,td { text-align:left; padding:0.5rem; border-bottom:1px solid #2a3540; }
+    th { color:var(--muted); }
+    tr.FAIL td { color:#f0a090; }
+    tr.ok td:last-child { color:var(--ok); }
+    .breaker-card { background:var(--panel); border-radius:8px; padding:1rem; margin-bottom:0.75rem; border:1px solid #2a3540; }
+    .breaker-card h4 span { color:var(--muted); font-weight:400; }
+    pre { background:#0a0e12; padding:0.75rem; border-radius:6px; overflow-x:auto; font-size:0.8rem; }
+    .disclaimer { color:var(--muted); font-size:0.85rem; margin-top:2rem; }
+    .back-link { display:inline-block; margin-bottom:1rem; color:#ffd7d2; text-decoration:none; border:1px solid #3a4a58; padding:0.4rem 0.7rem; border-radius:8px; font-size:0.9rem; }
+    .back-link:hover { border-color:#e85d4c; color:#fff; }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back-link" href="../index.html">← Back to home</a>
+    <h1>Silent Regression Report</h1>
+    <p class="meta">reference vs fp16_activations · rtol=0.0001 atol=1e-05</p>
+    <div class="problem">FP16/TensorRT islands can drift while the rest of the graph stays FP32. This scan simulates FP16 activation rounding at every tensor boundary.</div>
+    <div class="stats">
+      <div class="stat"><span>Tensors</span><strong>9</strong></div>
+      <div class="stat"><span>Failed</span><strong>9</strong></div>
+      <div class="stat"><span>Breakers</span><strong>3</strong></div>
+    </div>
+    <div class="first-fail"><strong>First divergence in topo order:</strong> First failure at <code>block0_conv</code> (Conv) — max Δ 5.00e-04</div>
+    <h2>Graph heatmap</h2>
+    <p style="color:var(--muted);font-size:0.9rem">Darker green = stable. Red = activation diverged between reference and candidate compile path.</p>
+    <svg viewBox="0 0 600 312" role="img" aria-label="Graph divergence heatmap">
+        <g class="graph-node" data-node="block0_conv">
+          <rect x="40" y="80" width="130" height="52" rx="8" fill="rgb(218,39,39)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="48" y="98" fill="#e8edf2" font-size="11" font-weight="600">block0_conv</text>
+          <text x="48" y="114" fill="#b8c5d0" font-size="10">Conv</text>
+          <text x="48" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 5.00e-04</text>
+        </g>
+        <g class="graph-node" data-node="block0_relu">
+          <rect x="182" y="80" width="130" height="52" rx="8" fill="rgb(218,39,39)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="190" y="98" fill="#e8edf2" font-size="11" font-weight="600">block0_relu</text>
+          <text x="190" y="114" fill="#b8c5d0" font-size="10">Relu</text>
+          <text x="190" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 5.00e-04</text>
+        </g>
+        <g class="graph-node" data-node="block1_conv">
+          <rect x="324" y="80" width="130" height="52" rx="8" fill="rgb(217,39,39)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="332" y="98" fill="#e8edf2" font-size="11" font-weight="600">block1_conv</text>
+          <text x="332" y="114" fill="#b8c5d0" font-size="10">Conv</text>
+          <text x="332" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 4.88e-04</text>
+        </g>
+        <g class="graph-node" data-node="block1_relu">
+          <rect x="466" y="80" width="130" height="52" rx="8" fill="rgb(217,39,39)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="474" y="98" fill="#e8edf2" font-size="11" font-weight="600">block1_relu</text>
+          <text x="474" y="114" fill="#b8c5d0" font-size="10">Relu</text>
+          <text x="474" y="126" fill="#fff" font-size="9" opacity="0.85">Δ 4.86e-04</text>
+        </g>
+        <g class="graph-node" data-node="block2_conv">
+          <rect x="40" y="144" width="130" height="52" rx="8" fill="rgb(217,39,39)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="48" y="162" fill="#e8edf2" font-size="11" font-weight="600">block2_conv</text>
+          <text x="48" y="178" fill="#b8c5d0" font-size="10">Conv</text>
+          <text x="48" y="190" fill="#fff" font-size="9" opacity="0.85">Δ 4.88e-04</text>
+        </g>
+        <g class="graph-node" data-node="block2_relu">
+          <rect x="182" y="144" width="130" height="52" rx="8" fill="rgb(217,39,39)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="190" y="162" fill="#e8edf2" font-size="11" font-weight="600">block2_relu</text>
+          <text x="190" y="178" fill="#b8c5d0" font-size="10">Relu</text>
+          <text x="190" y="190" fill="#fff" font-size="9" opacity="0.85">Δ 4.87e-04</text>
+        </g>
+        <g class="graph-node" data-node="block3_conv">
+          <rect x="324" y="144" width="130" height="52" rx="8" fill="rgb(255,20,30)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="332" y="162" fill="#e8edf2" font-size="11" font-weight="600">block3_conv</text>
+          <text x="332" y="178" fill="#b8c5d0" font-size="10">Conv</text>
+          <text x="332" y="190" fill="#fff" font-size="9" opacity="0.85">Δ 9.68e-04</text>
+        </g>
+        <g class="graph-node" data-node="block3_relu">
+          <rect x="466" y="144" width="130" height="52" rx="8" fill="rgb(251,22,31)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="474" y="162" fill="#e8edf2" font-size="11" font-weight="600">block3_relu</text>
+          <text x="474" y="178" fill="#b8c5d0" font-size="10">Relu</text>
+          <text x="474" y="190" fill="#fff" font-size="9" opacity="0.85">Δ 9.18e-04</text>
+        </g>
+        <g class="graph-node" data-node="fc">
+          <rect x="40" y="208" width="130" height="52" rx="8" fill="rgb(198,49,44)" stroke="#3a4a58" stroke-width="1"/>
+          <text x="48" y="226" fill="#e8edf2" font-size="11" font-weight="600">fc</text>
+          <text x="48" y="242" fill="#b8c5d0" font-size="10">Conv</text>
+          <text x="48" y="254" fill="#fff" font-size="9" opacity="0.85">Δ 2.44e-04</text>
+        </g></svg>
+    <h2>Top divergences</h2>
+    <table>
+      <thead><tr><th>Node</th><th>Op</th><th>Tensor</th><th>Max Δ</th><th>Rel L2</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr class="FAIL">
+          <td><code>block3_conv</code></td>
+          <td>Conv</td>
+          <td><code>conv3</code></td>
+          <td>9.68e-04</td>
+          <td>2.07e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>block3_relu</code></td>
+          <td>Relu</td>
+          <td><code>relu3</code></td>
+          <td>9.18e-04</td>
+          <td>2.09e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>block0_conv</code></td>
+          <td>Conv</td>
+          <td><code>conv0</code></td>
+          <td>5.00e-04</td>
+          <td>2.09e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>block0_relu</code></td>
+          <td>Relu</td>
+          <td><code>relu0</code></td>
+          <td>5.00e-04</td>
+          <td>2.09e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>block2_conv</code></td>
+          <td>Conv</td>
+          <td><code>conv2</code></td>
+          <td>4.88e-04</td>
+          <td>2.05e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>block1_conv</code></td>
+          <td>Conv</td>
+          <td><code>conv1</code></td>
+          <td>4.88e-04</td>
+          <td>2.07e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>block2_relu</code></td>
+          <td>Relu</td>
+          <td><code>relu2</code></td>
+          <td>4.87e-04</td>
+          <td>2.06e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>block1_relu</code></td>
+          <td>Relu</td>
+          <td><code>relu1</code></td>
+          <td>4.86e-04</td>
+          <td>2.08e-04</td>
+          <td>FAIL</td>
+        </tr>
+        <tr class="FAIL">
+          <td><code>fc</code></td>
+          <td>Conv</td>
+          <td><code>logits</code></td>
+          <td>2.44e-04</td>
+          <td>2.04e-04</td>
+          <td>FAIL</td>
+        </tr></tbody>
+    </table>
+    <h2>Recommended segment breakers (FTL-style)</h2>
+    
+        <div class="breaker-card">
+          <h4>block0_conv <span>(Conv)</span></h4>
+          <p>Activation &#x27;conv0&#x27; diverges max=5.00e-04 between reference and fp16_activations.</p>
+          <pre>{
+  &quot;break_before_nodes&quot;: [
+    &quot;block0_conv&quot;
+  ],
+  &quot;force_fp32_nodes&quot;: [
+    &quot;block0_conv&quot;
+  ],
+  &quot;backend_overrides&quot;: {
+    &quot;block0_conv&quot;: &quot;onnxruntime&quot;
+  }
+}</pre>
+        </div>
+        <div class="breaker-card">
+          <h4>block3_conv <span>(Conv)</span></h4>
+          <p>Activation &#x27;conv3&#x27; diverges max=9.68e-04 between reference and fp16_activations.</p>
+          <pre>{
+  &quot;break_before_nodes&quot;: [
+    &quot;block3_conv&quot;
+  ],
+  &quot;force_fp32_nodes&quot;: [
+    &quot;block3_conv&quot;
+  ],
+  &quot;backend_overrides&quot;: {
+    &quot;block3_conv&quot;: &quot;onnxruntime&quot;
+  }
+}</pre>
+        </div>
+        <div class="breaker-card">
+          <h4>block3_relu <span>(Relu)</span></h4>
+          <p>Activation &#x27;relu3&#x27; diverges max=9.18e-04 between reference and fp16_activations.</p>
+          <pre>{
+  &quot;break_before_nodes&quot;: [
+    &quot;block3_relu&quot;
+  ],
+  &quot;force_fp32_nodes&quot;: [
+    &quot;block3_relu&quot;
+  ],
+  &quot;backend_overrides&quot;: {
+    &quot;block3_relu&quot;: &quot;onnxruntime&quot;
+  }
+}</pre>
+        </div>
+    <p class="disclaimer">Third-party tool inspired by Nuro's published FTL architecture. Not affiliated with Nuro, Inc.</p>
+  </main>
+</body>
+</html>

@@ -1,8 +1,8 @@
 # FTL Segment Receipt — Run Report
 
-- **Run ID:** `20260706T231316Z`
-- **Model:** `examples/models/branch.onnx`
-- **Rules:** `out/receipts/20260706T231316Z/rules.from-scan.yaml`
+- **Run ID:** `20260710T013413Z`
+- **Model:** `examples/models/branch.graph.json`
+- **Rules:** `out/receipts/20260710T013413Z/rules.from-scan.yaml`
 - **Candidate path:** `fp16_activations`
 
 ## Summary
@@ -16,9 +16,9 @@
 FP16/TensorRT islands can drift while the rest of the graph stays FP32. This scan simulates FP16 activation rounding at every tensor boundary.
 
 ### Recommended segment breakers
-- `stem_conv` (Conv): max Δ 1.65e-03
-- `out_relu` (Relu): max Δ 1.94e-03
-- `branch_b_conv` (Conv): max Δ 1.94e-03
+- `stem_conv` (Conv): max Δ 1.82e-03
+- `out_relu` (Relu): max Δ 3.64e-03
+- `branch_b_conv` (Conv): max Δ 3.64e-03
 
 ## Compiler islands
 - Island 0: onnxruntime/fp32 (3 nodes, 2.450 ms)

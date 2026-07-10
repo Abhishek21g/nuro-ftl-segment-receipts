@@ -1,10 +1,10 @@
 {
-  "run_id": "20260710T013413Z",
+  "run_id": "20260710T013549Z",
   "status": "fail",
   "tensors_failed": 6,
   "tensors_compared": 6,
   "segment_count": 3,
   "parity_passed": 1,
   "parity_total": 1,
-  "first_failure_node": "stem_conv"
+  "first_failure_node": "conv_0"
 }

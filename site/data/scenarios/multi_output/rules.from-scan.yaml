@@ -1,0 +1,18 @@
+default_backend: onnxruntime
+default_dtype: fp32
+deny_ops: {}
+force_fp32_ops: []
+force_fp32_nodes:
+- boxes_head
+- classes_head
+- trunk_conv
+break_before_nodes:
+- boxes_head
+- classes_head
+- trunk_conv
+break_on_op: []
+backend_overrides:
+  trunk_conv: onnxruntime
+  classes_head: onnxruntime
+  boxes_head: onnxruntime
+early_publish: {}
