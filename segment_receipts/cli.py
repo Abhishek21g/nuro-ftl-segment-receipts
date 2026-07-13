@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from segment_receipts.deployproof import sign_run, verify_run
 from segment_receipts.doctor import diagnose, diagnose_to_dict
 from segment_receipts.merge_diff import build_merge_diff
 from segment_receipts.pipeline import build_plan_with_scan, execute_run
@@ -75,6 +76,26 @@ def build_parser() -> argparse.ArgumentParser:
     diff.add_argument("-o", "--output", type=Path, default=None)
     diff.add_argument("--json", action="store_true")
     diff.set_defaults(handler=_cmd_diff)
+
+    sign = sub.add_parser("sign", help="Sign a run as a DeployProof behavioral receipt.")
+    sign.add_argument("run", type=Path, help="Run dir under out/receipts/<id>")
+    sign.add_argument("-k", "--key", type=Path, default=None, help="HMAC signing key file")
+    sign.set_defaults(handler=_cmd_sign)
+
+    verify = sub.add_parser("verify", help="Verify signed receipt + policy (exit 1 if blocked).")
+    verify.add_argument("run", type=Path, help="Run dir under out/receipts/<id>")
+    verify.add_argument("-k", "--key", type=Path, default=None)
+    verify.add_argument("--json", action="store_true")
+    verify.set_defaults(handler=_cmd_verify)
+
+    flash = sub.add_parser(
+        "flash",
+        help="Vehicle flash gate — same as verify, prints FLASH APPROVED/BLOCKED.",
+    )
+    flash.add_argument("run", type=Path)
+    flash.add_argument("-k", "--key", type=Path, default=None)
+    flash.add_argument("--json", action="store_true")
+    flash.set_defaults(handler=_cmd_flash)
 
     return parser
 
@@ -177,6 +198,48 @@ def _cmd_scan(args: argparse.Namespace) -> int:
     print(f"Wrote {html_path}")
     print(f"Divergences: {report.tensors_failed}/{report.tensors_compared}")
     return 0
+
+
+def _cmd_sign(args: argparse.Namespace) -> int:
+    path = sign_run(args.run, key_path=args.key)
+    print(f"Signed: {path}")
+    print(f"Verify: segment-receipts flash {args.run}")
+    return 0
+
+
+def _cmd_verify(args: argparse.Namespace) -> int:
+    result = verify_run(args.run, key_path=args.key)
+    if args.json:
+        print(json.dumps(result.to_dict(), indent=2))
+    else:
+        for reason in result.reasons:
+            print(f"  ✗ {reason}")
+        if result.approved:
+            print("VERIFY: PASS")
+        else:
+            print("VERIFY: FAIL")
+    return 0 if result.approved else 1
+
+
+def _cmd_flash(args: argparse.Namespace) -> int:
+    result = verify_run(args.run, key_path=args.key)
+    label = "APPROVED" if result.approved else "BLOCKED"
+    if args.json:
+        print(json.dumps(result.to_dict(), indent=2))
+    else:
+        print(f"FLASH {label}")
+        if result.receipt:
+            r = result.receipt
+            print(f"  model: {r.get('model', '?')}")
+            print(f"  run:   {r.get('run_id', '?')}")
+            reg = r.get("regression", {})
+            print(
+                f"  drift: {reg.get('tensors_failed')}/{reg.get('tensors_compared')} layers · "
+                f"doctor: {r.get('doctor_status')}"
+            )
+        for reason in result.reasons:
+            print(f"  → {reason}")
+    return 0 if result.approved else 1
 
 
 def _cmd_diff(args: argparse.Namespace) -> int:

@@ -1,0 +1,31 @@
+{
+  "version": "1",
+  "kind": "deployproof.behavioral_receipt",
+  "run_id": "20260710T013413Z",
+  "model": "examples/models/branch.graph.json",
+  "candidate": "fp16_activations",
+  "doctor_status": "fail",
+  "regression": {
+    "tensors_failed": 6,
+    "tensors_compared": 6,
+    "first_failure_node": "stem_conv",
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "parity": {
+    "passed": 1,
+    "total": 1
+  },
+  "segment_count": 3,
+  "artifact_hashes": {
+    "manifest.json": "9444ef50f4027bcf96d12c5e1b14a12fa0d783cbed708c4c9dfcb06755b92aa7",
+    "summary.json": "fc24a3b33ec3f8215e51f454280f063d0118d46fd92c0756d204f4dbac2de7e0",
+    "regression_report.json": "0306d50eaacb65a65629c3f43827e7f1b531abd0800e344405da3105c34d15e3",
+    "receipt.json": "c901497dc5932b5cf30bd4187018222d1093ccc374b1d394fbedd8c74347449c"
+  },
+  "policy": {
+    "require_doctor_pass": true,
+    "max_tensor_failures": 0
+  },
+  "signed_at": "2026-07-13T05:13:43.111419+00:00"
+}

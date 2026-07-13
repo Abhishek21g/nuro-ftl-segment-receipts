@@ -1,42 +1,150 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Catch silent ONNX compile regressions before deploy. Interactive dashboard inspired by Nuro's FTL compiler architecture.">
-  <title>Silent Regression Hunter — FTL Segment Receipts</title>
+  <meta name="description" content="DeployProof stops silent AI model failures before they reach your fleet. Scan, sign, ship — with proof.">
+  <title>DeployProof — Ship AI models with proof</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="ambient" aria-hidden="true"></div>
-
-  <header class="topbar">
-    <nav class="pill-nav" aria-label="Primary">
-      <a href="#/" class="pill-link" data-route="dashboard">Dashboard</a>
-      <a href="#/runner" class="pill-link" data-route="runner">Live Runner</a>
-      <a href="#/vision" class="pill-link" data-route="vision">The Vision</a>
+  <header class="header">
+    <a class="logo" href="#">DeployProof</a>
+    <nav class="nav">
+      <a href="#product">Product</a>
+      <a href="#demo">Demo</a>
+      <a href="#how">How it works</a>
     </nav>
-    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch theme">
-      <span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span>
-      <span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span>
-    </button>
+    <div class="header-actions">
+      <a class="btn btn-ghost" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-primary" href="#demo">See it work</a>
+    </div>
   </header>
 
-  <main id="app">
+  <main>
+    <section class="hero">
+      <p class="badge">Pre-deploy safety for physical AI</p>
+      <h1>Your model didn't crash.<br>It <span class="accent">drifted</span>.</h1>
+      <p class="hero-sub">
+        Faster AI deployments often change outputs in ways tests miss.
+        DeployProof catches the drift, signs a ship certificate, and blocks bad updates
+        before they reach vehicles or production.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="#demo">Watch live check</a>
+        <a class="btn btn-secondary btn-lg" href="demo/regression_report.html">Sample report</a>
+      </div>
+      <p class="hero-note">Open source · Works with standard ML models · No fleet access required</p>
+    </section>
+
+    <section class="logos-bar">
+      <p>Inspired by problems described in <a href="https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67">Nuro's FTL compiler research</a> — independent project, not affiliated.</p>
+    </section>
+
+    <section class="metrics" id="product">
+      <div class="metric">
+        <strong id="metric-layers">—</strong>
+        <span>Layers checked per deploy</span>
+      </div>
+      <div class="metric">
+        <strong>&lt; 60s</strong>
+        <span>Time to a ship / no-ship verdict</span>
+      </div>
+      <div class="metric">
+        <strong>100%</strong>
+        <span>Fail-closed if proof is missing</span>
+      </div>
+    </section>
+
+    <section class="features">
+      <article class="feature">
+        <div class="feature-icon">01</div>
+        <h3>Find hidden drift</h3>
+        <p>Compare your accurate model against the optimized version layer by layer. See exactly where behavior first changes.</p>
+      </article>
+      <article class="feature">
+        <div class="feature-icon">02</div>
+        <h3>Sign a receipt</h3>
+        <p>Every approved deploy gets a signed certificate tied to that exact model build. Tamper-proof. Auditable.</p>
+      </article>
+      <article class="feature">
+        <div class="feature-icon">03</div>
+        <h3>Block bad flashes</h3>
+        <p>No valid receipt means no ship. Your CI and fleet gate stay closed until the model passes.</p>
+      </article>
+    </section>
+
+    <section class="demo-section" id="demo">
+      <div class="demo-copy">
+        <h2>Live deploy check</h2>
+        <p class="section-sub">Real scan on a bundled model. This is what your ops team sees before an OTA update.</p>
+        <ul class="demo-bullets">
+          <li>Green = cleared to ship</li>
+          <li>Red = update blocked</li>
+          <li>Receipt saved for audit</li>
+        </ul>
+        <button type="button" class="btn btn-primary" id="run-check">Run check again</button>
+      </div>
+      <div class="demo-panel" id="demo-panel">
+        <div class="demo-panel-head">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="demo-status">Loading…</span>
+        </div>
+        <div class="verdict-card" id="verdict-card">
+          <span class="verdict-label" id="verdict-label">—</span>
+          <p class="verdict-detail" id="verdict-detail"></p>
+        </div>
+        <div class="demo-stats" id="demo-stats"></div>
+        <div class="demo-layers" id="demo-layers"></div>
+        <p class="demo-foot" id="demo-foot"></p>
+      </div>
+    </section>
+
+    <section class="how" id="how">
+      <h2>How teams use it</h2>
+      <div class="how-steps">
+        <div class="how-step">
+          <h4>Before deploy</h4>
+          <p>Engineer runs one command on the candidate model build.</p>
+        </div>
+        <div class="how-step">
+          <h4>Gate in CI</h4>
+          <p>Pipeline signs the receipt or fails the build. No manual review roulette.</p>
+        </div>
+        <div class="how-step">
+          <h4>Fleet confidence</h4>
+          <p>Ops only pushes updates with a valid proof attached.</p>
+        </div>
+      </div>
+      <details class="engineer-details">
+        <summary>For engineers</summary>
+        <pre><code>pip install nuro-ftl-segment-receipts[onnx]
+segment-receipts run examples/models/branch.onnx -o out/receipts
+segment-receipts sign out/receipts/&lt;run-id&gt;
+segment-receipts flash out/receipts/&lt;run-id&gt;</code></pre>
+      </details>
+    </section>
+
+    <section class="cta-band">
+      <h2>Stop shipping silent failures.</h2>
+      <p>Try the demo. Read the report. Wire it into CI this week.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts" target="_blank" rel="noopener">Get the repo</a>
+        <a class="btn btn-secondary btn-lg" href="demo/regression_report.html">Open sample report</a>
+      </div>
+    </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="footer">
     <p>
-      Open tool inspired by <a href="https://medium.com/nuro/ftl-model-compiler-framework-d6b85c670f67">Nuro's FTL compiler blog</a> — not affiliated with Nuro, Inc.
-      · <a href="https://github.com/Abhishek21g/nuro-ftl-segment-receipts">GitHub</a>
-      · <a href="https://enaguthi.com">Abhishek Enaguthi</a>
+      DeployProof / Silent Regression Hunter · MIT ·
+      <a href="https://enaguthi.com">Abhishek Enaguthi</a>
     </p>
   </footer>
 
-  <script src="charts.js?v=2.0.0"></script>
-  <script src="app.js?v=2.0.0"></script>
+  <script src="app.js?v=3.0.0"></script>
 </body>
 </html>

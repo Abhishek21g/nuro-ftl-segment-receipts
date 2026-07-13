@@ -34,6 +34,20 @@ segment-receipts report out/receipts/<run-id>
 | `rules.from-scan.yaml` | Auto-generated breaker rules |
 | `report.md` | Human-readable report |
 
+## DeployProof (v1.2 — one-day build)
+
+Signed behavioral receipt + vehicle flash gate:
+
+```bash
+segment-receipts run examples/models/branch.onnx -o out/receipts
+segment-receipts sign out/receipts/<run-id>
+segment-receipts flash out/receipts/<run-id>   # FLASH BLOCKED if layers drifted
+```
+
+Or: `bash scripts/deployproof-demo.sh`
+
+Site: https://enaguthi.com/nuro-ftl-receipts/site/#/deployproof
+
 ## Demo
 
 - **Dashboard** (Trust Me Bro–grade interactive site): https://enaguthi.com/nuro-ftl-receipts/site/
